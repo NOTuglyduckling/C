@@ -1,4 +1,3 @@
-#include <cs50.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -19,7 +18,7 @@
 #define RESET   "\e[0;39m"
 
 // user-defined function prototypes
-string get_guess(int wordsize);
+char get_guess(int wordsize);
 int check_word(string guess, int wordsize, int status[], string choice);
 void print_word(string guess, int wordsize, int status[]);
 
@@ -63,7 +62,7 @@ int main(int argc, string argv[])
 
     // pseudorandomly select a word for this game
     srand(time(NULL));
-    string choice = options[rand() % LISTSIZE];
+    char choice = options[rand() % LISTSIZE];
 
     // allow one more guess than the length of the word
     int guesses = wordsize + 1;
