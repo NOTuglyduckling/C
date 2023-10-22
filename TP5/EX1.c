@@ -32,7 +32,7 @@ int Longueur(char *ch)
 {
     int n = 0;
     for (int i=0;i++<80;i++){
-        if ((*ch != '\0')) {*++ch;n++;} else {break;}}
+        if ((ch[n] != '\0')) {n++;} else {break;}}
     return n;
 }
 
@@ -47,8 +47,6 @@ void Copie(char *Destination, char *Source){
       Destination [i] = Source [i];
     }
     Destination[len]='\0';
-    return Destination;
-
 }
 
 
@@ -59,22 +57,30 @@ void Copie(char *Destination, char *Source){
  * Valeur de retour : 1 si les chaines contiennent des caracteres differents,
  * 0 sinon
  */
-/*int Differentes(char *ch1, char *ch2)
-{
-  A completer
+int Differentes(char *ch1, char *ch2){
+  do{
+    if (*ch1!=*ch2 || *ch1=='\0' || *ch2=='\0')return 1;
+    }
+  while(*++ch1!= '\0' && *++ch2!= '\0');
+  return 0;
 }
-*/
+
 
 
 /* Ajout (concatenation) d'une chaine de caractere a la fin d'une autre chaine
  * Destination : adresse du premiere caractere de la chaine destination
  * Source : adresse du premiere caractere de la chaine a ajouter
  */
-/*void Ajout(char *Destination, char *Source)
+void Ajout(char *Destination, char *Source)
 {
-  A completer
+  int len_dest = Longueur(Destination);
+  int i=0;
+  while (Source[i]!='\0'){
+    Destination[len_dest+i]=Source[i];
+    ++i;}
+  Destination[len_dest+i]='\0';
 }
-*/
+
 
 
 /* Fonction principale */
@@ -91,11 +97,11 @@ int main(void)
   printf("\nTest de Longueur\n----------------\n");
   printf("La chaine \"%s\" contient %d caracteres.\n",ch1,Longueur(ch1));
 
-  /*printf("\nTest de copie\n-------------\n");
+  printf("\nTest de copie\n-------------\n");
   Copie(ch2,ch1);
-  printf("ch1=\"%s\", ch2=\"%s\"\n",ch1,ch2);*/
+  printf("ch1=\"%s\", ch2=\"%s\"\n",ch1,ch2);
 
-  /*printf("\nTest de Differentes\n-------------------\n");
+  printf("\nTest de Differentes\n-------------------\n");
   while (Differentes(ch3,"n"))
   {
     printf("Tapez une premiere chaine : ");
@@ -109,9 +115,9 @@ int main(void)
     printf("Voulez-vous continuer le test de Differentes "
            "(tapez n pour arreter) : ");
     Lecture(ch3,1);
-  }*/
+  }
 
-  /*printf("\nTest de Ajout\n-------------\n");
+  printf("\nTest de Ajout\n-------------\n");
   Copie(ch3,"o");
   while (Differentes(ch3,"n"))
   {
@@ -124,7 +130,7 @@ int main(void)
     printf("ch1=\"%s\", ch2=\"%s\"\n",ch1,ch2);
     printf("Voulez-vous continuer le test de Ajout (tapez n pour arreter) : ");
     Lecture(ch3,1);
-  }*/
+  }
 
   return 0;
 }
