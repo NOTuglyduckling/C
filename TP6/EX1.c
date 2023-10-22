@@ -4,6 +4,9 @@
 typedef unsigned char** tMatrice;
 tMatrice MatAllouer(int* pNbLig, int* pNbCol);
 tMatrice MatLire(int* pNbLig, int* pNbCol);
+void MatAfficher(tMatrice Mat, int NbLIg, int NbCol);
+tMatrice MatCopier(tMatrice Mat, int NbLig, int NbCol);
+void MatLiberer(tMatrice* pMat);
 
 int main(void){
     int NbLig, NbCol;
@@ -75,3 +78,36 @@ tMatrice MatLire(int* pNbLig, int* pNbCol){
     return matrice;
 }
 
+void MatAfficher(tMatrice Mat, int NbLIg, int NbCol){
+    for (int i = 0 ; i < NbLIg ; i++){
+        for (int j = 0 ; j < NbCol ; j++){
+            printf("%3hhu ",Mat[i][j]);
+        }
+        printf("\n");
+    }
+}
+
+tMatrice MatCopier(tMatrice Mat, int NbLig, int NbCol){
+    tMatrice Copie = MatAllouer(&NbLig,&NbCol);
+    if (Copie==NULL){
+        printf("Erreur d'allocation memoire ! \n");
+        return NULL;
+    }
+    for (int i=0 ; i<NbLig ; i++ ){
+        for (int j=0 ; j<NbCol ; j++ ){
+            Copie[i][j] = Mat[i][j];
+        }
+    }
+    return Copie;
+}
+
+void MatLiberer(tMatrice *pMat) {
+    if (*pMat != NULL) {
+        // Free individual rows
+        for (int i = 0; i < *pMat[0]; i++) {
+            free((*pMat)[i]);
+        }
+        free(*pMat);
+        *pMat = NULL;
+    }
+}
