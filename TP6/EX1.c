@@ -8,8 +8,9 @@ void MatAfficher(tMatrice Mat, int NbLIg, int NbCol);
 tMatrice MatCopier(tMatrice Mat, int NbLig, int NbCol);
 void MatLiberer(tMatrice* pMat);
 
-int main(void){
+int main(void) {
     int NbLig, NbCol;
+
     tMatrice mat = MatLire(&NbLig, &NbCol);
 
     if (mat == NULL) {
@@ -18,16 +19,25 @@ int main(void){
     } else {
         printf("Matrix with %d rows and %d columns has been successfully created.\n", NbLig, NbCol);
 
-        // Here, you can use the 'mat' matrix as needed.
+        printf("Original Matrix:\n");
+        MatAfficher(mat, NbLig, NbCol);
 
-        // Don't forget to free the memory when you're done.
-        for (int i = 0; i < NbLig; i++) {
-            free(mat[i]);
+
+        tMatrice copy = MatCopier(mat, NbLig, NbCol);
+        if (copy != NULL) {
+            printf("Copy of the Matrix:\n");
+            MatAfficher(copy, NbLig, NbCol);
+
+            MatLiberer(&copy);
+        } else {
+            printf("Failed to create a copy of the matrix.\n");
+            return NULL;
         }
-        free(mat);
+        MatLiberer(&mat);
     }
     return 0;
 }
+
 
 tMatrice MatAllouer(int* pNbLig, int* pNbCol){
     tMatrice matrice = (tMatrice)malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**
