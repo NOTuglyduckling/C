@@ -40,20 +40,10 @@ int main(void) {
 
 
 tMatrice MatAllouer(int* pNbLig, int* pNbCol){
-    tMatrice matrice = (tMatrice)malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**
-    if (matrice == NULL) {
-        printf("Erreur d'allocation de la mémoire\n");
-        return NULL;
-    }
-    for (int i=0 ; i<*pNbLig ; i++) {
-        matrice[i] = (unsigned char*)malloc(*pNbCol * sizeof(unsigned char));
-        if (matrice[i]==NULL) {
-            for (int j = 0; j < i; j++) {
-                free(matrice[j]);
-            }
-            free(matrice);
-            return NULL;
-        }
+    unsigned char* car = malloc(*pNbCol * *pNbLig * sizeof(unsigned char));
+    tMatrice matrice = malloc(*pNbLig * sizeof(car)); //tMatrice= unsigned char**
+    for(int i=0 ;i<*pNbLig ;i++){
+        matrice[i] = &car[i * (*pNbCol)];
     }
     return matrice;
 }
@@ -65,24 +55,20 @@ tMatrice MatLire(int* pNbLig, int* pNbCol){
     printf("Combien de colonne ?");
     scanf("%d",pNbCol);
 
-    tMatrice matrice = MatAllouer(&pNbLig, &pNbCol);
+    tMatrice matrice = MatAllouer(pNbLig, pNbCol);
 
     if (matrice == NULL) {
         printf("La mémoire n'a pas été allouée correctement.\n");
         return NULL;
     }
 
-    printf("Saisissez les éléments de la matrice (valeurs de type unsigned char) :\n");
+    printf("Saisissez les elements de la matrice (valeurs de type unsigned char) :\n");
     for (int i = 0 ; i < *pNbLig ; i++){
         for (int j = 0 ; j < *pNbCol ; j++){
-            if (scanf(" %hhu", &matrice[i][j]) != 1) {
-                // If input is not a valid unsigned char, free the allocated memory and return NULL
-                for (int k = 0; k < i; k++) {
-                    free(matrice[k]);
-                }
-                free(matrice);
-                return NULL; 
-            }
+            printf("donne la valeur de la case a la ligne %d et colonne %d : ", i+1, j+1);
+            unsigned char val;
+            scanf(" %hhu", &val);
+            matrice[i][j]=val;
         }
     }
     return matrice;
@@ -114,10 +100,27 @@ tMatrice MatCopier(tMatrice Mat, int NbLig, int NbCol){
 void MatLiberer(tMatrice *pMat) {
     if (*pMat != NULL) {
         // Free individual rows
-        for (int i = 0; i < *pMat[0]; i++) {
+        for (int i = 0; i < (*pMat)[0]; i++) {
             free((*pMat)[i]);
         }
         free(*pMat);
         *pMat = NULL;
     }
 }
+
+/*
+    tMatrice matrice = (tMatrice)malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**
+    if (matrice == NULL) {
+        printf("Erreur d'allocation de la mémoire\n");
+        return NULL;
+    }
+    for (int i=0 ; i<*pNbLig ; i++) {
+        matrice[i] = (unsigned char*)malloc(*pNbCol * sizeof(unsigned char));
+        if (matrice[i]==NULL) {
+            for (int j = 0; j < i; j++) {
+                free(matrice[j]);
+            }
+            free(matrice);
+            return NULL;
+        }
+*/
