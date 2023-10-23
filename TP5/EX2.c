@@ -21,7 +21,7 @@ int main(void){
 }
 
 double* CreerTableau(int NbElts){
-    double* Tab = (double*)malloc(NbElts * sizeof(double));
+    double* Tab = malloc(NbElts * sizeof(double));
     if(Tab == NULL) {  // si malloc a renvoye un pointeur null, allocation impossible
         printf("Erreur d'allocation memoire\n");
         return NULL;
