@@ -40,13 +40,13 @@ int main(void) {
 
 
 tMatrice MatAllouer(int* pNbLig, int* pNbCol){
-    tMatrice matrice = (tMatrice)malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**
+    tMatrice matrice = malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**
     if (matrice == NULL) {
         printf("Erreur d'allocation de la mémoire\n");
         return NULL;
     }
     for (int i=0 ; i<*pNbLig ; i++) {
-        matrice[i] = (unsigned char*)malloc(*pNbCol * sizeof(unsigned char));
+        matrice[i] = malloc(*pNbCol * sizeof(unsigned char));
         if (matrice[i]==NULL) {
             for (int j = 0; j < i; j++) {
                 free(matrice[j]);
