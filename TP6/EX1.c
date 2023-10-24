@@ -55,9 +55,7 @@ tMatrice MatLire(int* pNbLig, int* pNbCol){
     for (int i = 0 ; i < *pNbLig ; i++){
         for (int j = 0 ; j < *pNbCol ; j++){
             printf("donne la valeur de la case a la ligne %d et colonne %d : ", i+1, j+1);
-            unsigned char val;
-            scanf(" %hhu", &val);
-            matrice[i][j]=val;
+            scanf(" %hhu", &matrice[i][j]);   
         }
     }
     return matrice;
