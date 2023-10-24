@@ -28,12 +28,11 @@ int Lecture(char *ch, int NbCarMax)
  * ch : adresse du premier caractere de la chaine
  * Valeur de retour : nombre de caracteres de la chaine
  */
-int Longueur(char *ch)
-{
-    int n = 0;
-    for (int i=0;i++<80;i++){
-        if ((ch[n] != '\0')) {n++;} else {break;}}
-    return n;
+int Longueur(char *ch){
+  int n = 0;
+  while (ch[n]!='\0')
+    n++;
+  return n;
 }
 
 
@@ -42,11 +41,11 @@ int Longueur(char *ch)
  * Source : adresse du premiere caractere de la chaine source
  */
 void Copie(char *Destination, char *Source){
-    int len= Longueur (Source);
-    for (int i=len-1 ; i>=0 ; --i){
-      Destination [i] = Source [i];
-    }
-    Destination[len]='\0';
+  int len= Longueur (Source);
+  for (int i=len-1 ; i>=0 ; --i){
+    Destination [i] = Source [i];
+  }
+  Destination[len]='\0';
 }
 
 
@@ -57,13 +56,18 @@ void Copie(char *Destination, char *Source){
  * Valeur de retour : 1 si les chaines contiennent des caracteres differents,
  * 0 sinon
  */
-int Differentes(char *ch1, char *ch2){
-  do{
-    if (*ch1!=*ch2 || *ch1=='\0' || *ch2=='\0')return 1;
-    }
-  while(*++ch1!= '\0' && *++ch2!= '\0');
+int Differentes(char *ch1, char *ch2) {
+  int n = 0;
+  while (ch1[n] != '\0' && ch2[n] != '\0') {
+    if (ch1[n] != ch2[n])
+      return 1;
+    n++;
+  }
+  if (ch1[n] != '\0' || ch2[n] != '\0')
+    return 1;
   return 0;
 }
+
 
 
 
@@ -77,7 +81,8 @@ void Ajout(char *Destination, char *Source)
   int i=0;
   while (Source[i]!='\0'){
     Destination[len_dest+i]=Source[i];
-    ++i;}
+    ++i;
+  }
   Destination[len_dest+i]='\0';
 }
 

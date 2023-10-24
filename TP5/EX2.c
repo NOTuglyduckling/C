@@ -25,21 +25,20 @@ double* CreerTableau(int NbElts){
     if(Tab == NULL) {  // si malloc a renvoye un pointeur null, allocation impossible
         printf("Erreur d'allocation memoire\n");
         return NULL;
-    } else{
-        return Tab;
     }
+    return Tab;
 }
 
 void SaisirTableau(double* Tab, int NbElts){
     for(int i = 0; i < NbElts; i++){
         printf("\ndonner le nombre %d: ",i+1);
-        scanf("%lf", Tab + i);
+        scanf("%lf", &Tab[i]);
     }
 }
 
 void AfficherTableau(double* Tab, int NbElts){
     for(int i = 0; i < NbElts; i++) {
-        printf("%lf ", *(Tab+i));
+        printf("%lf ", Tab[i]);
     }
 }
 

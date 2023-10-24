@@ -8,8 +8,8 @@ int main(){
     while (vals[i]!=0){
         if (vals[i]<0){
             somme+=vals[i];
-            }
-            i++;
+        }
+        i++;
         scanf("%le",&vals[i]);
         }
     printf("La somme des negatifs est %d", somme);
