@@ -41,9 +41,9 @@ int main(void) {
 
 tMatrice MatAllouer(int* pNbLig, int* pNbCol){
     unsigned char* car = malloc(*pNbCol * *pNbLig * sizeof(unsigned char)); //BIG inner stack
-    tMatrice matrice = malloc(*pNbLig * sizeof(car)); //tMatrice= unsigned char**, stack of pointers who point to parts of the inner stack.
+    tMatrice matrice = malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**, stack of pointers who point to parts of the inner stack.
     for(int i=0 ;i<*pNbLig ;i++){
-        matrice[i] = &car[i * (*pNbCol)];
+        matrice[i] = &car[i * *pNbCol];
     }
     return matrice;
 }
