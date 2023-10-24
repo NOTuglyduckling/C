@@ -40,8 +40,8 @@ int main(void) {
 
 
 tMatrice MatAllouer(int* pNbLig, int* pNbCol){
-    unsigned char* car = malloc(*pNbCol * *pNbLig * sizeof(unsigned char));
-    tMatrice matrice = malloc(*pNbLig * sizeof(car)); //tMatrice= unsigned char**
+    unsigned char* car = malloc(*pNbCol * *pNbLig * sizeof(unsigned char)); //BIG inner stack
+    tMatrice matrice = malloc(*pNbLig * sizeof(car)); //tMatrice= unsigned char**, stack of pointers who point to parts of the inner stack.
     for(int i=0 ;i<*pNbLig ;i++){
         matrice[i] = &car[i * (*pNbCol)];
     }
@@ -109,13 +109,13 @@ void MatLiberer(tMatrice *pMat) {
 }
 
 /*
-    tMatrice matrice = (tMatrice)malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**
+    tMatrice matrice = malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**
     if (matrice == NULL) {
         printf("Erreur d'allocation de la mémoire\n");
         return NULL;
     }
     for (int i=0 ; i<*pNbLig ; i++) {
-        matrice[i] = (unsigned char*)malloc(*pNbCol * sizeof(unsigned char));
+        matrice[i] = malloc(*pNbCol * sizeof(unsigned char));
         if (matrice[i]==NULL) {
             for (int j = 0; j < i; j++) {
                 free(matrice[j]);
