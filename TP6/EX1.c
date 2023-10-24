@@ -13,22 +13,11 @@ int main(void) {
 
     tMatrice mat = MatLire(&NbLig, &NbCol);
 
-    if (mat == NULL) {
-        printf("Error allocating or reading the matrix.\n");
-        return NULL;
-    }
-
     printf("Matrix with %d rows and %d columns has been successfully created.\n", NbLig, NbCol);
-
     printf("Original Matrix:\n");
     MatAfficher(mat, NbLig, NbCol);
 
     tMatrice copy = MatCopier(mat, NbLig, NbCol);
-
-    if (copy == NULL) {
-        printf("Failed to create a copy of the matrix.\n");
-        return NULL;
-    }
 
     printf("Copy of the Matrix:\n");
     MatAfficher(copy, NbLig, NbCol);
