@@ -2,7 +2,7 @@
 #include <stdlib.h>
 
 typedef unsigned char** tMatrice;
-tMatrice MatAllouer(int* pNbLig, int* pNbCol);
+tMatrice MatAllouer(int pNbLig, int pNbCol);
 tMatrice MatLire(int* pNbLig, int* pNbCol);
 void MatAfficher(tMatrice Mat, int NbLIg, int NbCol);
 tMatrice MatCopier(tMatrice Mat, int NbLig, int NbCol);
@@ -28,11 +28,11 @@ int main(void) {
 }
 
 
-tMatrice MatAllouer(int* pNbLig, int* pNbCol){
-    unsigned char* car = malloc(*pNbCol * *pNbLig * sizeof(unsigned char)); //BIG inner stack
-    tMatrice matrice = malloc(*pNbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**, stack of pointers who point to parts of the inner stack.
-    for(int i=0 ;i<*pNbLig ;i++){
-        matrice[i] = &car[i * *pNbCol];
+tMatrice MatAllouer(int NbLig, int NbCol){
+    unsigned char* car = malloc(NbCol * NbLig * sizeof(unsigned char)); //BIG inner stack
+    tMatrice matrice = malloc(NbLig * sizeof(unsigned char*)); //tMatrice= unsigned char**, stack of pointers who point to parts of the inner stack.
+    for(int i=0 ;i<NbLig ;i++){
+        matrice[i] = &car[i * NbCol];
     }
     return matrice;
 }
