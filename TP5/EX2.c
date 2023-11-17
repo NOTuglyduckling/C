@@ -12,7 +12,7 @@ int main(void){
     scanf("%d",&NbElts);
     double* Tab= CreerTableau(NbElts);
     if (Tab == NULL) {
-        return 1; // Exit the program if memory allocation fails
+        return NULL; // Exit the program if memory allocation fails
     }
     SaisirTableau(Tab,NbElts);
     AfficherTableau(Tab,NbElts);
