@@ -19,8 +19,10 @@ int IndiceDernierChiffre(const char *ch){
   int i=0;
   int der=-1;
   while (*ch != '\0'){
-    if ((*ch >= '0') && (*ch <= '9')){der=i;i++;*ch++;} else {i++;*ch++;}}
-  return der; // LIGNE À MODIFIER
+    if ((*ch >= '0') && (*ch <= '9')){der=i;}
+    i++;
+    *ch++;}
+  return der;
 }
 
 
@@ -37,16 +39,16 @@ int IndiceDernierChiffre(const char *ch){
  *    - nombre de températures strictement supérieures à Seuil
  */
 int Depassement(float Temp[], int NbTemp, float Seuil, float *pMoy){
-  int sup =0;
-  float moyenne = 0;
+  int sup = 0;
+  float moy = 0;
   for(int i =0;i<NbTemp;i++){
     if (Temp[i] > Seuil){
       sup++;
-      moyenne += Temp[i];
+      moy += Temp[i];
     }
   }
-  moyenne = (moyenne/sup);
-  *pMoy = moyenne;
+  moy = (moy/sup);
+  *pMoy = moy;
   return sup; // LIGNE À MODIFIER
 }
 
@@ -82,7 +84,6 @@ int MinLig(int Mat[NB_LIG_MAX][NB_COL_MAX], int NbLig, int NbCol, int Min[NB_LIG
       if (Min[i] < mini2){
         mini2 = Min[i];
       }
-
     }
     return mini2; // LIGNE À MODIFIER
 }
@@ -100,16 +101,14 @@ int MinLig(int Mat[NB_LIG_MAX][NB_COL_MAX], int NbLig, int NbCol, int Min[NB_LIG
  *    - nombre de caractères supprimés (3 dans l'exemple ci-dessus)
  */
 int SupprimerRepetitions(const char *source, char *destination){
-  if (source == NULL) {
-    return -1;}
   int cars = 0;
-  char cop = '\0';
+  char cara = '\0';
   while (*source != '\0') {
-    if (*source != cop) {
+    if (*source != cara) {
       *destination = *source;
       destination++;
     } else {cars++;}
-    cop = *source;
+    cara = *source;
     source++;
   }
   *destination = '\0';
@@ -132,9 +131,8 @@ double *SommeTab(const double *Tab1, const double *Tab2, int NbElts)
 {
   double *tab = malloc(NbElts*sizeof(double));
   for(int i = 0 ; i < NbElts ; i++){
-    tab[i]  = Tab1[i] + Tab2[i];
-  }
-  return tab; // LIGNE À MODIFIER
+    tab[i]  = Tab1[i] + Tab2[i];}
+  return tab;
 }
 
 
@@ -194,7 +192,7 @@ struct sArticle *CreerArticle(int Ref, float Px, int Qt)
     article->Reference = Ref;
     article->Prix = Px;
     article->Quantite = Qt;
-    return article; // LIGNE À MODIFIER
+    return article;
 }
 
 // ============================== EXERCICE 7.2 ============================== //
@@ -209,9 +207,9 @@ struct sArticle *CreerArticle(int Ref, float Px, int Qt)
  */
 void InformationsArticle(struct sArticle *pArticle, int *pRef, float *pPx, int *pQt)
 {
-    *pRef = pArticle->Reference;
-    *pPx = pArticle->Prix;
-    *pQt = pArticle->Quantite;
+  *pRef = pArticle->Reference;
+  *pPx = pArticle->Prix;
+  *pQt = pArticle->Quantite;
 }
 
 
