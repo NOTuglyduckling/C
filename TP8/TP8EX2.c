@@ -2,6 +2,9 @@
 #include <stdio.h>
 
 int main(void) {
-    // TODO: Écrire la fonction principale pour tester le module image
+    char name[30];
+    prinf("donnez le nom de l'image :");
+    scanf("%s",name);
+    
     return 0;
 }

@@ -38,13 +38,51 @@ void ImLiberer(tImage* pIm) {
 }
 
 int ImNbLig(tImage Im) {
-    return Im->NbLig;
+    int lig;
+    fscanf(Im,"%d",&lig);
+    return lig;
 }
 
 int ImNbCol(tImage Im) {
-    return Im->NbCol;
+    int col;
+    fscanf(Im,"%d",&col);
+    return col;
 }
 
 tMatrice ImNivGris(tImage Im) {
-    return Im->NivGris;
+
+    int NbLignes = ImNbLig(Im);
+    int NbColonnes = ImNbCol(Im);
+    int NivGris = 
+    tImage image = I(NbLignes,NbColonnes);
+    return image;
+}
+
+tImage ImLire (char NomFichier[]){
+    FILE *Im = fopen(NomFichier,"rt");
+    if (Im == NULL){
+        printf("Erreur ouverture fichier");
+        return 1;
+    }
+    char magic[3];
+    fscanf(Im, "%2s", magic);
+    if (magic != "P2"){
+        printf("Le fichier n'est pas un fichier PGM");
+        return 2;
+    }
+    // Ignorer les commentaires
+    char commentaire[100];
+    while (fgetc(Im) == '#') {
+    fgets(commentaire, sizeof(commentaire), Im);
+    }
+
+    int NbLig = ImNbLig(Im);
+    int NbCol = ImNbCol(Im);
+
+    fclose(Im);
+    return Im;
+}
+
+void ImEcrire(tImage Im, char NomFichier[]){
+
 }
