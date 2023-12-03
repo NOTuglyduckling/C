@@ -2,16 +2,19 @@
 #define IDENTITE_H
 
 #define LG_DATE 10 
+#define MAX_LINE_LEN 80
 // Nombre de caract è res d ’ une date sous la forme jj / mm / aaaa
+
 // Identit é d ’ une personne
 struct sIdentite
 {
 int Identifiant ; // Identifiant unique
-char * Nom ; // Nom ( cha î ne de caract è res allou é e dynamiquement )
-char * Prenom ; // Pr é nom ( cha î ne de caract è res allou é e dynamiquement )
+char * Nom ; // Nom ( chaîne de caract è res allouée dynamiquement )
+char * Prenom ; // Pr é nom ( chaîne de caract è res allouée dynamiquement )
 char Sexe ; // ’F ’ ou ’M ’
 char DateNaissance [ LG_DATE +1]; // Date de naissance sous la forme jj / mm / aaaa
 };
+
 // Type permettant de manipuler l ’ identit é d ’ une personne
 typedef struct sIdentite * tIdentite ;
 
