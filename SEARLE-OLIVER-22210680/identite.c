@@ -78,12 +78,12 @@ tIdentite IdentiteLiref(FILE *f) {
     fscanf(f, "%d\n", &Id);
 
     // Lecture du nom
-    fgets(Nom, sizeof(Nom), f);
-    Nom[strcspn(Nom, "\n")] = '\0';
+    fgets(Nom, sizeof(Nom), f); // Prends toute la ligne
+    Nom[strcspn(Nom, "\n")] = '\0'; // Enlève tout le vide
 
     // Lecture du prénom
-    fgets(Prenom, sizeof(Prenom), f);
-    Prenom[strcspn(Prenom, "\n")] = '\0'; 
+    fgets(Prenom, sizeof(Prenom), f); // Prends toute la ligne
+    Prenom[strcspn(Prenom, "\n")] = '\0'; // Enlève tout le vide
 
     // Lecture du sexe
     fscanf(f, " %c\n", &Sexe);
@@ -93,6 +93,7 @@ tIdentite IdentiteLiref(FILE *f) {
     DateNais[strcspn(DateNais, "\n")] = '\0';
 
     tIdentite nouvelleIdentite = IdentiteCreer(Id, Nom, Prenom, Sexe, DateNais);
+    
     //libérer les pointeurs temporaires.
     free(Nom);
     free(Prenom);
