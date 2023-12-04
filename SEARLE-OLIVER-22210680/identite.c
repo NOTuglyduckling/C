@@ -1,7 +1,4 @@
 #include "identite.h"
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
 
 tIdentite IdentiteCreer(int Id, char *Nom, char *Prenom, char Sexe, char DateNais[]){
     tIdentite Identite = malloc(sizeof(struct sIdentite));
@@ -26,7 +23,7 @@ tIdentite IdentiteCreer(int Id, char *Nom, char *Prenom, char Sexe, char DateNai
     strcpy(Identite->Nom, Nom);
     strcpy(Identite->Prenom, Prenom);
     Identite->Sexe = Sexe;
-    strncpy(Identite->DateNaissance, DateNais);
+    strcpy(Identite->DateNaissance, DateNais);
     return Identite;
 }
 
@@ -78,32 +75,25 @@ tIdentite IdentiteLiref(FILE *f) {
     }
 
     // Lecture de l'identifiant
-    fscanf(f, "%d", &Id);
+    fscanf(f, "%d\n", &Id);
 
     // Lecture du nom
-    fgets(Nom, MAX_LINE_LEN, f);
+    fgets(Nom, sizeof(Nom), f);
     Nom[strcspn(Nom, "\n")] = '\0';
 
     // Lecture du prénom
-    fgets(Prenom, MAX_LINE_LEN, f);
+    fgets(Prenom, sizeof(Prenom), f);
     Prenom[strcspn(Prenom, "\n")] = '\0'; 
 
     // Lecture du sexe
-    fscanf(f, " %c", &Sexe);
+    fscanf(f, " %c\n", &Sexe);
 
     // Lecture de la date de naissance
-    fgets(DateNais, LG_DATE+1, f);
+    fgets(DateNais, LG_DATE + 1, f);
     DateNais[strcspn(DateNais, "\n")] = '\0';
 
-    // Vérifier si la ligne est vide (fin d'informations)
-    if (strlen(DateNais) == 0) {
-        free(Nom);
-        free(Prenom);
-        return NULL;
-    }
-
     tIdentite nouvelleIdentite = IdentiteCreer(Id, Nom, Prenom, Sexe, DateNais);
-
+    //libérer les pointeurs temporaires.
     free(Nom);
     free(Prenom);
 

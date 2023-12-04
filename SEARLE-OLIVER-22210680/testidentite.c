@@ -1,25 +1,41 @@
 #include "identite.h"
 
 int main() {
-    // Exemple d'utilisation de la fonction IdentiteCreer
-    tIdentite personne = IdentiteCreer(1, "Doe", "John", 'M', "01/01/2000");
+    // Test IdentiteCreer function
+    tIdentite identite1 = IdentiteCreer(1, "Doe", "John", 'M', "01/01/1990");
+    tIdentite identite2 = IdentiteCreer(2, "Smith", "Jane", 'F', "15/05/1985");
 
-    // Vérification de l'allocation mémoire
-    if (personne != NULL) {
-        // Affichage des informations
-        printf("Identifiant: %d\n", personne->Identifiant);
-        printf("Nom: %s\n", personne->Nom);
-        printf("Prenom: %s\n", personne->Prenom);
-        printf("Sexe: %c\n", personne->Sexe);
-        printf("Date de naissance: %s\n", personne->DateNaissance);
+    // Test IdentiteAfficher function
+    printf("Identity 1:\n");
+    IdentiteAfficher(identite1);
 
-        // Libération de la mémoire allouée dynamiquement
-        free(personne->Nom);
-        free(personne->Prenom);
-        free(personne);
-    } else {
-        printf("Erreur d'allocation mémoire.\n");
+    printf("\nIdentity 2:\n");
+    IdentiteAfficher(identite2);
+
+    // Test IdentiteLiref function
+    FILE *file = fopen("personne.ind", "r");
+    if (file == NULL) {
+        fprintf(stderr, "Error opening file.\n");
+        return 1;
     }
+
+    tIdentite identiteFromFile = IdentiteLiref(file);
+    fclose(file);
+
+    // Check if reading from file was successful
+    if (identiteFromFile == NULL) {
+        fprintf(stderr, "Error reading identity from file.\n");
+        return 1;
+    }
+
+    // Test IdentiteAfficher function for the identity read from file
+    printf("\nIdentity from file:\n");
+    IdentiteAfficher(identiteFromFile);
+
+    // Test IdentiteLiberer function
+    IdentiteLiberer(identite1);
+    IdentiteLiberer(identite2);
+    IdentiteLiberer(identiteFromFile);
 
     return 0;
 }

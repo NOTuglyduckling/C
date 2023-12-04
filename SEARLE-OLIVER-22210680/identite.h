@@ -1,21 +1,22 @@
 #ifndef IDENTITE_H
 #define IDENTITE_H
-
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 #define LG_DATE 10 
 #define MAX_LINE_LEN 80
-// Nombre de caract è res d ’ une date sous la forme jj / mm / aaaa
 
-// Identit é d ’ une personne
+// Identité d’une personne
 struct sIdentite
 {
 int Identifiant ; // Identifiant unique
-char * Nom ; // Nom ( chaîne de caract è res allouée dynamiquement )
-char * Prenom ; // Pr é nom ( chaîne de caract è res allouée dynamiquement )
+char * Nom ; // Nom ( chaîne de caractères allouée dynamiquement )
+char * Prenom ; // Pr é nom ( chaîne de caractères allouée dynamiquement )
 char Sexe ; // ’F ’ ou ’M ’
 char DateNaissance [ LG_DATE +1]; // Date de naissance sous la forme jj / mm / aaaa
 };
 
-// Type permettant de manipuler l ’ identit é d ’ une personne
+// Type permettant de manipuler l’identité d’une personne
 typedef struct sIdentite * tIdentite ;
 
 extern tIdentite IdentiteCreer(int Id, char *Nom, char *Prenom, char Sexe, char DateNais[]);
