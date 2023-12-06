@@ -1,7 +1,7 @@
 # Makefile
 
 # Définition des fichiers sources
-SRCS = testidentite.c identite.c
+SRCS = testgenea.c identite.c genea.c
 
 # Définition des fichiers objets
 OBJS = $(SRCS:.c=.o)
@@ -13,7 +13,7 @@ CC = gcc
 CFLAGS = -Wall -Wextra
 
 # Nom de l'exécutable
-TARGET = testidentite
+TARGET = testgenea
 
 # Règle de construction de l'exécutable
 $(TARGET): $(OBJS)

@@ -156,6 +156,22 @@ int ArbreLireLienParentef(FILE *f, int *pIdEnfant, int *pIdParent, char *pParent
 }
 
 tArbre ArbreLireLienParenteFichier(tArbre Arbre, char Fichier[]){
+    FILE *f = fopen(Fichier, "r");
+    if (f == NULL) {
+        fprintf(stderr, "Erreur d'ouverture du fichier %s.\n", Fichier);
+        return NULL;
+    }
 
+    int idEnfant, idParent;
+    char parente;
+
+    // Lire les liens de parenté à partir du fichier
+    while (ArbreLireLienParentef(f, &idEnfant, &idParent, &parente)) {
+        // Ajouter le lien de parenté à l'arbre
+        ArbreAjouterLienParente(Arbre, idEnfant, idParent, parente);
+    }
+
+    fclose(f);
+    return Arbre;
 }
 
