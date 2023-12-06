@@ -13,29 +13,43 @@ int main() {
     IdentiteAfficher(identite2);
 
     // Test IdentiteLiref function
-    FILE *file = fopen("personne.ind", "r");
+    FILE *file = fopen("arbre4.ind", "r");
     if (file == NULL) {
         fprintf(stderr, "Error opening file.\n");
         return 1;
     }
 
-    tIdentite identiteFromFile = IdentiteLiref(file);
+    tIdentite identiteFromFile1 = IdentiteLiref(file);
+    tIdentite identiteFromFile2 = IdentiteLiref(file);
+    tIdentite identiteFromFile3 = IdentiteLiref(file);
     fclose(file);
 
     // Check if reading from file was successful
-    if (identiteFromFile == NULL) {
-        fprintf(stderr, "Error reading identity from file.\n");
-        return 1;
-    }
+    // if (identiteFromFile1 == NULL) {
+    //     fprintf(stderr, "Error reading identity 1 from file.\n");
+    //     return 1;
+    // }
+    // if (identiteFromFile2 == NULL) {
+    //     fprintf(stderr, "Error reading identity 2 from file.\n");
+    //     return 1;
+    // }
+    // if (identiteFromFile3 == NULL) {
+    //     fprintf(stderr, "Error reading identity 3 from file.\n");
+    //     return 1;
+    // }
 
     // Test IdentiteAfficher function for the identity read from file
     printf("\nIdentity from file:\n");
-    IdentiteAfficher(identiteFromFile);
+    IdentiteAfficher(identiteFromFile1);
+    IdentiteAfficher(identiteFromFile2);
+    IdentiteAfficher(identiteFromFile3);
 
     // Test IdentiteLiberer function
     IdentiteLiberer(identite1);
     IdentiteLiberer(identite2);
-    IdentiteLiberer(identiteFromFile);
+    IdentiteLiberer(identiteFromFile1);
+    IdentiteLiberer(identiteFromFile2);
+    IdentiteLiberer(identiteFromFile3);
 
     return 0;
 }

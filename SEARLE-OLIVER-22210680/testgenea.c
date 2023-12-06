@@ -31,7 +31,7 @@ int main(int argc, char *argv[]) {
     }
 
     // Afficher l'arbre
-    printf("Arbre généalogique :\n");
+    printf("Arbre genealogique :\n");
     ArbreAfficher(arbre);
 
     // Libérer la mémoire allouée pour l'arbre

@@ -2,21 +2,20 @@
 
 tIdentite IdentiteCreer(int Id, char *Nom, char *Prenom, char Sexe, char DateNais[]){
     tIdentite Identite = malloc(sizeof(struct sIdentite));
-    if (Identite == NULL) {
+    if (Identite == NULL){
         return NULL;}
 
     Identite->Nom = malloc(strlen(Nom)+1);
-    if (Identite->Nom == NULL) {
+    if (Identite->Nom == NULL){
         free(Identite);
-        return NULL;
-    }
+        return NULL;}
 
     Identite->Prenom = malloc(strlen(Prenom)+1);
-    if (Identite->Prenom == NULL) {
+    if (Identite->Prenom == NULL){
         free(Identite->Nom);
         free(Identite);
-        return NULL;
-    }
+        return NULL;}
+
     // Si l'allocation mémoire marche bien on commence à ajouter les valeurs.
 
     Identite->Identifiant = Id;
@@ -61,21 +60,24 @@ void IdentiteLiberer(tIdentite Identite){
     free(Identite);
 }
 
-tIdentite IdentiteLiref(FILE *f) {
+tIdentite IdentiteLiref(FILE *f){
     int Id;
     char* Nom = malloc(MAX_LINE_LEN);
     char* Prenom = malloc(MAX_LINE_LEN);
     char Sexe;
     char DateNais[LG_DATE + 1];
     
-    if (Nom == NULL || Prenom == NULL) {
+    if (Nom == NULL || Prenom == NULL){
         free(Nom);
         free(Prenom);
-        return NULL;
-    }
+        return NULL;}
 
     // Lecture de l'identifiant
-    fscanf(f, "%d\n", &Id);
+    if (fscanf(f, "%d\n", &Id) != 1){
+        // Gérer l'erreur ou la fin du fichier
+        free(Nom);
+        free(Prenom);
+        return NULL;}
 
     // Lecture du nom
     fgets(Nom, sizeof(Nom), f); // Prends toute la ligne
@@ -89,8 +91,8 @@ tIdentite IdentiteLiref(FILE *f) {
     fscanf(f, " %c\n", &Sexe);
 
     // Lecture de la date de naissance
-    fgets(DateNais, LG_DATE + 1, f);
-    DateNais[strcspn(DateNais, "\n")] = '\0';
+    fgets(DateNais, sizeof(DateNais), f);
+    DateNais[strcspn(DateNais, "\n")] = '\0'; // Enlève tout le vide
 
     tIdentite nouvelleIdentite = IdentiteCreer(Id, Nom, Prenom, Sexe, DateNais);
     

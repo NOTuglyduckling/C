@@ -3,6 +3,7 @@
 tArbre ArbreCreer(void){
     tArbre Arbre = malloc(sizeof(struct sArbre));
     if (Arbre == NULL) {
+        fprintf(stderr, "Erreur d'allocation mémoire pour l'arbre.\n");
         return NULL;}
     
     Arbre->pPremiere = NULL;
@@ -19,7 +20,7 @@ void ArbreAfficher(tArbre Arbre){
         IdentiteAfficher(current->Identite);
 
         // Afficher le père
-        printf("\tPère : ");
+        printf("\tPere : ");
         if (current->pPere != NULL) {
             IdentiteAfficher(current->pPere->Identite);
         } else {
@@ -27,7 +28,7 @@ void ArbreAfficher(tArbre Arbre){
         }
 
         // Afficher la mère
-        printf("\tMère : ");
+        printf("\tMere : ");
         if (current->pMere != NULL) {
             IdentiteAfficher(current->pMere->Identite);
         } else {
@@ -43,8 +44,8 @@ void ArbreAjouterPersonne(tArbre Arbre, tIdentite Identite){
     struct sFiche* nouvelleFiche = malloc(sizeof(struct sFiche));
     if (nouvelleFiche == NULL) {
         fprintf(stderr, "Erreur d'allocation mémoire pour la nouvelle personne.\n");
-        return;}
-
+        return;
+    }
     // Initialiser les champs de la fiche
     nouvelleFiche->Identite = Identite;
     nouvelleFiche->pPere = NULL;
@@ -86,20 +87,19 @@ tArbre ArbreLirePersonnesFichier(char Fichier[]){
     FILE *f = fopen(Fichier, "r");
     if (f == NULL) {
         fprintf(stderr, "Erreur d'ouverture du fichier %s.\n", Fichier);
-        return NULL;}
-
+        return NULL;
+    }
     tArbre arbre = ArbreCreer();
     if (arbre == NULL) {
         fclose(f);
         return NULL;
     }
-
     // Lire chaque personne depuis le fichier et les ajouter à l'arbre
     while (1) {
         tIdentite nouvelleIdentite = IdentiteLiref(f);
         if (nouvelleIdentite == NULL) {
-            break;}
-
+            break;
+        }
         ArbreAjouterPersonne(arbre, nouvelleIdentite);
     }
 
@@ -133,7 +133,7 @@ void ArbreAjouterLienParente(tArbre Arbre, int IdEnfant, int IdParent, char Pare
 
     // Vérifier si les identifiants sont trouvés
     if (enfant == NULL || parent == NULL) {
-        fprintf(stderr, "Erreur : Identifiant non trouvé dans l'arbre.\n");
+        fprintf(stderr, "Erreur : Identifiant non trouve dans l'arbre.\n");
         return;
     }
 
@@ -143,7 +143,7 @@ void ArbreAjouterLienParente(tArbre Arbre, int IdEnfant, int IdParent, char Pare
     } else if (Parente == 'M') {
         enfant->pMere = parent;
     } else {
-        fprintf(stderr, "Erreur : Type de parenté non valide.\n");
+        fprintf(stderr, "Erreur : Type de parente non valide.\n");
     }
 }
 
