@@ -1,56 +1,43 @@
 #include "identite.h"
 
 int main() {
-    // Test IdentiteCreer function
-    tIdentite identite1 = IdentiteCreer(1, "Doe", "John", 'M', "01/01/1990");
+    // Test fonction IdentiteCreer
+    tIdentite identite1 = IdentiteCreer(1, "Searle", "Oliver", 'M', "07/01/2003");
     tIdentite identite2 = IdentiteCreer(2, "Smith", "Jane", 'F', "15/05/1985");
 
-    // Test IdentiteAfficher function
-    printf("Identity 1:\n");
+    // Test fonction IdentiteAfficher
+    printf("Identite 1:\n");
     IdentiteAfficher(identite1);
 
-    printf("\nIdentity 2:\n");
+    printf("\nIdentite 2:\n");
     IdentiteAfficher(identite2);
 
-    // Test IdentiteLiref function
+    // Test fonction IdentiteLiref
     FILE *file = fopen("personne.ind", "r");
     if (file == NULL) {
         fprintf(stderr, "Error opening file.\n");
         return 1;
     }
 
-    tIdentite identiteFromFile1 = IdentiteLiref(file);
-    tIdentite identiteFromFile2 = IdentiteLiref(file);
-    tIdentite identiteFromFile3 = IdentiteLiref(file);
+    tIdentite identiteFromFile = IdentiteLiref(file);
+
     fclose(file);
 
-    printf("\nIdentity from file:\n");
-    // Check if reading from file was successful
-    if (identiteFromFile1 == NULL) {
+    printf("\nIdentite du fichier:\n");
+    // Verifie lecture correcte
+    if (identiteFromFile == NULL) {
         fprintf(stderr, "Error reading identity 1 from file.\n");
         return 1;
-    }IdentiteAfficher(identiteFromFile1);
-    if (identiteFromFile2 == NULL) {
-        fprintf(stderr, "Error reading identity 2 from file.\n");
-        return 1;
-    }IdentiteAfficher(identiteFromFile2);
-    if (identiteFromFile3 == NULL) {
-        fprintf(stderr, "Error reading identity 3 from file.\n");
-        return 1;
-    }IdentiteAfficher(identiteFromFile3);
+    }
 
-    // Test IdentiteAfficher function for the identity read from file
-    
-    
-    
-    
+    // Test fonction IdentiteAfficher pour l'identité du fichier
+    IdentiteAfficher(identiteFromFile);
 
-    // Test IdentiteLiberer function
+
+    // Test fonction IdentiteLiberer
     IdentiteLiberer(identite1);
     IdentiteLiberer(identite2);
-    IdentiteLiberer(identiteFromFile1);
-    IdentiteLiberer(identiteFromFile2);
-    IdentiteLiberer(identiteFromFile3);
+    IdentiteLiberer(identiteFromFile);
 
     return 0;
 }

@@ -83,18 +83,34 @@ tIdentite IdentiteLiref(FILE *f){
         return NULL;}
 
     // Lecture du nom
-    fgets(Nom, MAX_LINE_LEN, f); // Prends toute la ligne
+    if (fgets(Nom, MAX_LINE_LEN, f) == NULL) {// Prends toute la ligne
+        free(Nom);
+        free(Prenom);
+        return NULL;
+    }  
     Nom[strcspn(Nom, "\n")] = '\0'; // Enlève tout le vide
 
     // Lecture du prénom
-    fgets(Prenom, MAX_LINE_LEN, f); // Prends toute la ligne
+    if (fgets(Prenom, MAX_LINE_LEN, f) == NULL) {// Prends toute la ligne
+        free(Nom);
+        free(Prenom);
+        return NULL;
+    } 
     Prenom[strcspn(Prenom, "\n")] = '\0'; // Enlève tout le vide
 
     // Lecture du sexe
-    fscanf(f, " %c\n", &Sexe);
+    if (fscanf(f, " %c\n", &Sexe) != 1) {
+        free(Nom);
+        free(Prenom);
+        return NULL;
+    }
 
     // Lecture de la date de naissance
-    fgets(DateNais, LG_DATE+1, f);
+    if (fgets(DateNais, LG_DATE + 1, f) == NULL) {
+        free(Nom);
+        free(Prenom);
+        return NULL;
+    }
     DateNais[strcspn(DateNais, "\n")] = '\0'; // Enlève tout le vide
 
     tIdentite nouvelleIdentite = IdentiteCreer(Id, Nom, Prenom, Sexe, DateNais);

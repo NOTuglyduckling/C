@@ -1,0 +1,2 @@
+cat arbre4.dot | dot -Tpdf > arbre4.pdf
+#convertir arbe4 en pdf
