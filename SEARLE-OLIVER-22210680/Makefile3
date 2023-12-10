@@ -25,4 +25,4 @@ $(TARGET): $(OBJS)
 
 # Règle pour nettoyer les fichiers objets et l'exécutable
 clean:
-	rm -f $(OBJS) $(TARGET)
+	-rm -f $(OBJS) $(TARGET)

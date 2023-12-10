@@ -243,14 +243,11 @@ void ArbreEcrireGV(tArbre Arbre, char Fichier[]) {
     // Fermeture du fichier
     fclose(f);
 
-    printf("Le fichier DOT a été généré avec succès : %s\n", Fichier);
+    printf("Le fichier DOT a ete genere avec succes : %s\n", Fichier);
 }
 
 void AfficherAscendantsRecursive(tArbre Arbre, struct sFiche *personne, int niveau) {
-    // Afficher l'identité de la personne avec le niveau approprié de tabulations
-    for (int i = 0; i < niveau; i++) {
-        printf("\t");
-    }
+    // Afficher l'identité de la personne
     IdentiteAfficher(personne->Identite);
 
     // Afficher les ascendants
@@ -259,7 +256,7 @@ void AfficherAscendantsRecursive(tArbre Arbre, struct sFiche *personne, int nive
         for (int i = 0; i < niveau + 1; i++) {
             printf("\t");
         }
-        printf("Père : ");
+        printf("Pere : ");
         //appeler la fonction récursive
         AfficherAscendantsRecursive(Arbre, personne->pPere, niveau + 1);
     }
@@ -269,7 +266,7 @@ void AfficherAscendantsRecursive(tArbre Arbre, struct sFiche *personne, int nive
         for (int i = 0; i < niveau + 1; i++) {
             printf("\t");
         }
-        printf("Mère : ");
+        printf("Mere : ");
         //appeler la fonction récursive
         AfficherAscendantsRecursive(Arbre, personne->pMere, niveau + 1);
     }
@@ -301,12 +298,12 @@ void ArbreAfficherAscendants(tArbre Arbre, int Identifiant) {
 void EcrireAscendantsGVRecursive(FILE *f, tArbre Arbre, struct sFiche *personne) {
 
     if (IdentiteSexe(personne->Identite)=='M'){
-        fprintf(f, "\tnode [color = blue];\n");
+        fprintf(f, "\n\tnode [color = blue];\n");
     } else {
-        fprintf(f, "\tnode [color = green];\n");
+        fprintf(f, "\n\tnode [color = green];\n");
     } // Change la couleur d'affichage selon le sexe
 
-    fprintf(f, "%d [label=\"%s\\n%s\\n%s\", shape=box];\n",
+    fprintf(f, "\t%d [label=\"%s\\n%s\\n%s\", shape=box];\n",
             IdentiteIdentifiant(personne->Identite),
             IdentiteNom(personne->Identite),
             IdentitePrenom(personne->Identite),
@@ -314,14 +311,14 @@ void EcrireAscendantsGVRecursive(FILE *f, tArbre Arbre, struct sFiche *personne)
 
     // Écrire les arcs vers les ascendants
     if (personne->pPere != NULL) {
-        fprintf(f, "\t%d -> %d [label=\"Père\"];\n",
+        fprintf(f, "\t%d -> %d;\n",
                 IdentiteIdentifiant(personne->Identite),
                 IdentiteIdentifiant(personne->pPere->Identite));
         EcrireAscendantsGVRecursive(f, Arbre, personne->pPere);
     }
 
     if (personne->pMere != NULL) {
-        fprintf(f, "\t%d -> %d [label=\"Mère\"];\n",
+        fprintf(f, "\t%d -> %d;\n",
                 IdentiteIdentifiant(personne->Identite),
                 IdentiteIdentifiant(personne->pMere->Identite));
         EcrireAscendantsGVRecursive(f, Arbre, personne->pMere);
@@ -339,9 +336,9 @@ void ArbreEcrireAscendantsGV(tArbre Arbre, int Identifiant, char Fichier[]) {
     fprintf(f, "digraph {\n");
     fprintf(f, "\trankdir = \"BT\";\n");
     // Écriture du style d'écriture
-    fprintf(f, "\tnode [shape = box, fontname = \"Arial\", fontsize = 10];\n");
+    fprintf(f, "\n\tnode [shape = box, fontname = \"Arial\", fontsize = 10];\n");
     // Écriture du style des arcs du graphe
-    fprintf(f, "\tedge [dir = none];\n");
+    fprintf(f, "\n\tedge [dir = none];\n");
 
     // Trouver la personne dans l'arbre
     struct sFiche *personne = NULL;
@@ -370,4 +367,3 @@ void ArbreEcrireAscendantsGV(tArbre Arbre, int Identifiant, char Fichier[]) {
 
     fclose(f);
 }
-

@@ -1,0 +1,14 @@
+make -f Makefile1
+./testidentite
+
+make -f Makefile2
+./testgenea fichier-personnes.ind fichier-liens-parente.par
+
+make -f Makefile3
+./visuarbre fichier-personnes.ind fichier-liens-parente.par fichier-dot.dot
+
+make -f Makefile4
+./visuarbreasc fichier-personnes.ind fichier-liens-parente.par identifiant fichier-dot.dot
+
+cat fichier.dot | dot -Tpdf > fichier.pdf
+#convertir arbe4 en pdf
