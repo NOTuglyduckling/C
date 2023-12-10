@@ -31,9 +31,9 @@ extern void ArbreAjouterLienParente(tArbre Arbre, int IdEnfant, int IdParent, ch
 extern int ArbreLireLienParentef(FILE *f, int *pIdEnfant, int *pIdParent, char *pParente);
 extern tArbre ArbreLireLienParenteFichier(tArbre Arbre, char Fichier[]);
 extern void ArbreEcrireGV(tArbre Arbre, char Fichier[]);
-extern void ArbreAfficherAscendants(tArbre Arbre, int Identifiant);
 extern void AfficherAscendantsRecursive(tArbre Arbre, struct sFiche *personne, int niveau);
-extern void ArbreEcrireAscendantsGV(tArbre Arbre, int Identifiant, char Fichier[]);
+extern void ArbreAfficherAscendants(tArbre Arbre, int Identifiant);
 extern void EcrireAscendantsGVRecursive(FILE *f, tArbre Arbre, struct sFiche *personne);
+extern void ArbreEcrireAscendantsGV(tArbre Arbre, int Identifiant, char Fichier[]);
 
 #endif // GENEA_H

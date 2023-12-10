@@ -1,2 +1,11 @@
-cat arbre4.dot | dot -Tpdf > arbre4.pdf
+make -f Makefile1
+./testidentite
+
+make -f Makefile2
+./testgenea fichier-personnes fichier-liens-parente
+
+make -f Makefile3
+./visuarbre fichier-personnes fichier-liens-parente fichier-dot
+
+cat fichier.dot | dot -Tpdf > fichier.pdf
 #convertir arbe4 en pdf

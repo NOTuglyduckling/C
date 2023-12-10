@@ -5,7 +5,7 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "Usage: %s fichier-personnes fichier-liens-parente fichier-dot\n", argv[0]);
         return 1;
     }
-
+    
     char *fichierPersonnes = argv[1];
     char *fichierLiensParente = argv[2];
     char *fichierDot = argv[3];
@@ -28,6 +28,10 @@ int main(int argc, char *argv[]){
         fprintf(stderr, "Erreur lors de la lecture des liens de parenté depuis le fichier %s.\n", fichierLiensParente);
         return 1;
     }
+
+    // Afficher l'arbre
+    printf("Arbre genealogique :\n");
+    ArbreAfficher(arbre);
 
     // Écrire l'arbre généalogique au format DOT
     ArbreEcrireGV(arbre, fichierDot);

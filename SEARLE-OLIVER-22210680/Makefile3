@@ -1,7 +1,7 @@
 # Makefile
 
 # Définition des fichiers sources
-SRCS = visurabre.c identite.c genea.c
+SRCS = visuarbre.c identite.c genea.c
 
 # Définition des fichiers objets
 OBJS = $(SRCS:.c=.o)
@@ -10,7 +10,7 @@ OBJS = $(SRCS:.c=.o)
 CC = gcc
 
 # Définition des options de compilation
-CFLAGS = -Wall -Wextra
+CFLAGS = -Wpedantic -Wall -Wextra
 
 # Nom de l'exécutable
 TARGET = visuarbre
