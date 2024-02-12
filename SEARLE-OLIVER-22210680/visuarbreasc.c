@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
     arbre = ArbreLireLienParenteFichier(arbre, fichierLiensParente);
 
     // Afficher l'arbre ascendant
-    printf("Arbre généalogique ascendant de l'identifiant %d :\n", identifiant);
+    printf("Arbre genealogique ascendant de l'identifiant %d :\n", identifiant);
     ArbreAfficherAscendants(arbre, identifiant);
 
     // Écrire l'arbre ascendant au format DOT

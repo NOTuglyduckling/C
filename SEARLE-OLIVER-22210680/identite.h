@@ -11,7 +11,7 @@ struct sIdentite
 {
 int Identifiant ; // Identifiant unique
 char * Nom ; // Nom ( chaîne de caractères allouée dynamiquement )
-char * Prenom ; // Pr é nom ( chaîne de caractères allouée dynamiquement )
+char * Prenom ; // Prénom ( chaîne de caractères allouée dynamiquement )
 char Sexe ; // ’F ’ ou ’M ’
 char DateNaissance [ LG_DATE +1]; // Date de naissance sous la forme jj / mm / aaaa
 };
@@ -19,6 +19,7 @@ char DateNaissance [ LG_DATE +1]; // Date de naissance sous la forme jj / mm / a
 // Type permettant de manipuler l’identité d’une personne
 typedef struct sIdentite * tIdentite ;
 
+// Fonctions dans identite.c
 extern tIdentite IdentiteCreer(int Id, char *Nom, char *Prenom, char Sexe, char DateNais[]);
 extern int IdentiteIdentifiant(tIdentite Identite);
 extern char *IdentiteNom(tIdentite Identite);

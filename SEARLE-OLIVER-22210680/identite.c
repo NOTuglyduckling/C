@@ -3,24 +3,23 @@
 tIdentite IdentiteCreer(int Id, char *Nom, char *Prenom, char Sexe, char DateNais[]){
     tIdentite Identite = malloc(sizeof(struct sIdentite));
     if (Identite == NULL){
-        fprintf(stderr, "prout");
+        fprintf(stderr, "Erreur d'allocation Memoire");
         return NULL;}
 
     Identite->Nom = malloc(strlen(Nom)+1);
     if (Identite->Nom == NULL){
         free(Identite);
-        fprintf(stderr, "prout2");
+        fprintf(stderr, "Erreur d'allocation Memoire");
         return NULL;}
 
     Identite->Prenom = malloc(strlen(Prenom)+1);
     if (Identite->Prenom == NULL){
         free(Identite->Nom);
         free(Identite);
-        fprintf(stderr, "prout3");
+        fprintf(stderr, "Erreur d'allocation Memoire");
         return NULL;}
 
     // Si l'allocation mémoire marche bien on commence à ajouter les valeurs.
-
     Identite->Identifiant = Id;
     strcpy(Identite->Nom, Nom);
     strcpy(Identite->Prenom, Prenom);

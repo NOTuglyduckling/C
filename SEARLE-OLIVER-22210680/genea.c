@@ -1,6 +1,7 @@
 #include "genea.h"
 
 tArbre ArbreCreer(void){
+    // Creer et retourne un Arbre vide
     tArbre Arbre = malloc(sizeof(struct sArbre));
     if (Arbre == NULL) {
         fprintf(stderr, "Erreur d'allocation mémoire pour l'arbre.\n");
@@ -13,6 +14,7 @@ tArbre ArbreCreer(void){
 }
 
 void ArbreAfficher(tArbre Arbre){
+    // Affiche l'arbre
     struct sFiche *current = Arbre->pPremiere;
 
     while (current != NULL) {
@@ -41,6 +43,7 @@ void ArbreAfficher(tArbre Arbre){
 }
 
 void ArbreAjouterPersonne(tArbre Arbre, tIdentite Identite){
+    // Ajoute la Fiche d'une personne à un arbre pre-existant
     struct sFiche* nouvelleFiche = malloc(sizeof(struct sFiche));
     if (nouvelleFiche == NULL) {
         fprintf(stderr, "Erreur d'allocation mémoire pour la nouvelle personne.\n");
@@ -65,6 +68,7 @@ void ArbreAjouterPersonne(tArbre Arbre, tIdentite Identite){
 }
 
 void ArbreLiberer(tArbre Arbre){
+    // Libère la totalité de l'arbre et toutes les fiches dedans
     struct sFiche* current = Arbre->pPremiere;
     while (current != NULL) {
         struct sFiche* next = current->pSuivante;
