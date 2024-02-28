@@ -44,22 +44,26 @@ long TailleRepCour(){
     return oct;
 }
 
-void namesrep(){
+void namesrep(char nomRep[]){
     struct stat infos;
-    DIR* current = opendir(".");
+    DIR* current = opendir(nomRep);
     struct dirent* element;
+    char designation[512];
     if (current==NULL){
-        perror(".");
-        return -1;
+        perror(nomRep);
+        return;
     }
     while ((element = readdir(current))!=NULL){
-        if (lstat(element->d_name,&infos)==-1){
-            perror(element->d_name);
-        }else if (S_ISREG(infos.st_mode)){ 
-            printf("/%s\n",element);
-        } else {
-            printf("/%s",element);
-        }
+        if (strcmp(element->d_name,".")&&strcmp(element->d_name,"..")){
+            strncpy(designation,nomRep,511);
+            strncat(designation,"/",511);strncat(designation,element->d_name,511);
+            if (lstat(designation,&infos)==-1)
+                perror(designation);
+        }else if (S_ISREG(infos.st_mode))
+            printf("%s\n",designation);
+        else if(S_ISDIR(infos.st_mode))
+            namesrep(designation);
     }
     closedir(current);
+    return;
 }
