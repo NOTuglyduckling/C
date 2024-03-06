@@ -11,7 +11,7 @@ void parcourir_sous_arborescence(const char *repertoire, int *compteur) {
 
     if ((dir = opendir(repertoire)) == NULL) {
         perror("opendir");
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     while ((entree = readdir(dir)) != NULL) {
@@ -20,7 +20,7 @@ void parcourir_sous_arborescence(const char *repertoire, int *compteur) {
 
         if (stat(chemin, &infos) == -1) {
             perror("stat");
-            exit(EXIT_FAILURE);
+            exit(2);
         }
 
         if (S_ISDIR(infos.st_mode)) {
@@ -41,7 +41,7 @@ void parcourir_sous_arborescence(const char *repertoire, int *compteur) {
 int main(int argc, char *argv[]) {
     if (argc != 2) {
         fprintf(stderr, "Usage: %s <repertoire>\n", argv[0]);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     int compteur = 0;

@@ -22,7 +22,8 @@ int main(){
         succ=pid;
     }
     Afficher(i,succ);
-    while ((pid=wait(&retour))!=-1){
+    int retour;
+    while ((waitpid(pid,&retour,0))!=-1){
         printf("[père] mon fils %d, numero %d est terminé\n", pid,WEXITSTATUS(retour));
     }
     printf("[père] j'ai fini\n");
@@ -30,7 +31,7 @@ int main(){
 }
 
 void Afficher(int i,int succ){
-    for (int i=0; i<N;i++){
-        printf("[%d] mon pid %d, mon succ %d", n,getpid(),succ);
+    for (int n=0; n<N; n++){
+        printf("[%d] mon pid %d, mon succ %d", i,getpid(),succ);
     }
 }
