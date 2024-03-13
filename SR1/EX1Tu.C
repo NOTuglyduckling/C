@@ -15,7 +15,7 @@ void main(){
     pid_t pid =fork();
     switch(pid){
         case -1:{
-            perror("prblm creation tube");
+            perror("fork");
             exit(2);
         }
         case 0:{

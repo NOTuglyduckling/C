@@ -18,7 +18,7 @@ int main(int argc, char *argv[]){
         perror("pipe");
         exit(2);
     }
-    for (int i = 1; i < argc; i++){
+    for (int i = 1; i < N; i++){
         unsigned long long int nombre = strtoull(argv[i], NULL, 10);
         pid_t pid = fork();
         if (pid == -1){

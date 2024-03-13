@@ -3,8 +3,12 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <sys/stat.h>
+#include <fcntl.h>
 
 int main(){
+    char* fichier;
+    int fd = open(fichier,O_RDWR);
     off_t position;
     position=lseek(fd,0,SEEK_CUR);
     lseek(fd,position,SEEK_SET);

@@ -21,7 +21,7 @@ int main(int argc, char* argv[]){
         perror(argv[3]);
         close(in);
         exit(3);}
-    if (dup2(in,STDERR_FILENO)==-1){
+    if (dup2(in,STDIN_FILENO)==-1){
         perror("STDIN");
         close(in);
         close(out);

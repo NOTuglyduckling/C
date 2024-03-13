@@ -16,11 +16,11 @@ int main(int argc, char * argv[]){
     int NBr,NBc;
     char Bloc[TAILLE_BLOC];
     sour = open (argv[1],O_WRONLY);
-    if (dst==-1){
+    if (sour==-1){
         perror(argv[1]);
         exit(2);
     }
-    dst= opne(argv[2],O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP );
+    dst= open(argv[2],O_WRONLY|O_CREAT|O_TRUNC,S_IRUSR|S_IWUSR|S_IRGRP );
     if (dst==-1){
         perror(argv[2]);
         close(sour);

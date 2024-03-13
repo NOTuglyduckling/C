@@ -42,7 +42,7 @@ void main(){
             close(tubeA[0]);
             close(tubeN[1]);
             int somme=0;
-            while(read(tubeN[0],&char, sizeof(char))>0)
+            while(read(tubeN[0],&car, sizeof(char))>0)
                 somme+=car-'0';
             close(tubeN[0]);
             printf("Somme : %d\n",somme);
