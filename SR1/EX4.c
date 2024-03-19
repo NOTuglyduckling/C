@@ -24,4 +24,4 @@ int main(void){
         perror("pwd");}
     wait(NULL); /* le père attend la fin du fils */
     exit(0); /* terminaison du père */
-} /* (le fils n'exécute pas cette instruction) *
+}

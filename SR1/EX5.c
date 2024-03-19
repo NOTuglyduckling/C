@@ -10,7 +10,7 @@
 
 int main(int argc, char * argv[]){
     if (argc != 3){
-        fprinf(stderr, "Usage %s fichierin fichier out\n",argv[0]);
+        fprinf(stderr, "Usage %s fichierin fichierout\n",argv[0]);
         exit(1);}
     int sour, dst;
     int NBr,NBc;

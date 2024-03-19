@@ -1,6 +1,5 @@
 #include <stdio.h>
 #include <stdlib.h>
-
 typedef unsigned char** tMatrice;
 tMatrice MatAllouer(int pNbLig, int pNbCol);
 tMatrice MatLire(int* pNbLig, int* pNbCol);
@@ -10,7 +9,6 @@ void MatLiberer(tMatrice* pMat);
 
 int main(void) {
     int NbLig, NbCol;
-
     tMatrice mat = MatLire(&NbLig, &NbCol);
 
     printf("Matrix with %d rows and %d columns has been successfully created.\n", NbLig, NbCol);
