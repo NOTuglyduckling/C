@@ -14,12 +14,12 @@ int main(int argc, char* argv[]){
         exit(1);
     }
     struct stat inode;
-    if(fstat(argv[1],&inode)==1){
+    if(lstat(argv[1],&inode)==1){
         perror(argv[1]);
         exit(2);
     }
     printf("%s ",argv[1]);
-    printf("%pd octets, ", inode.st_size);
+    printf("%d octets, ", inode.st_size);
     printf("dernière modification %s\n",ctime(&inode.st_mtime));
     exit(0);
 }
@@ -56,13 +56,14 @@ void namesrep(char nomRep[]){
     while ((element = readdir(current))!=NULL){
         if (strcmp(element->d_name,".")&&strcmp(element->d_name,"..")){
             strncpy(designation,nomRep,511);
-            strncat(designation,"/",511);strncat(designation,element->d_name,511);
+            strncat(designation,"/",511);
+            strncat(designation,element->d_name,511);
             if (lstat(designation,&infos)==-1)
                 perror(designation);
-        }else if (S_ISREG(infos.st_mode))
-            printf("%s\n",designation);
-        else if(S_ISDIR(infos.st_mode))
-            namesrep(designation);
+            }else if (S_ISREG(infos.st_mode))
+                printf("%s\n",designation);
+            else if(S_ISDIR(infos.st_mode))
+                namesrep(designation);
     }
     closedir(current);
     return;

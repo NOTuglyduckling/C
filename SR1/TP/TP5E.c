@@ -84,9 +84,9 @@ int main(int argc, char *argv[]) {
             exit(2);
         }
 
-        if (pid == 0) { // Code des fils traiterFichier
-            close(tube_traiter[1]); // Fermeture du descripteur d'écriture du tube dans les fils
-            close(tube_reponse[0]); // Fermeture du descripteur de lecture du tube dans les fils
+        if (pid == 0) {
+            close(tube_traiter[1]);
+            close(tube_reponse[0]);
             char nom_fichier[MAX_PATH_LENGTH];
             while (read(tube_traiter[0], nom_fichier, sizeof(nom_fichier))>0) {
                 if (bytes_read == -1) {
@@ -104,8 +104,7 @@ int main(int argc, char *argv[]) {
                     exit(6);
                 }
                 close(fd);
-                if (strncmp(magic_number_check, magic_number_hex, MAGIC_NUMBER_LENGTH) == 0) {
-                    // Correspondance du magic number, envoyer les informations du fichier au processus traiterRéponse
+                if (strncmp(magic_number_check, magic_number_hex, MAGIC_NUMBER_LENGTH) == 0) 
                     ReponseFichier reponse;
                     strncpy(reponse.nom_fichier, nom_fichier, sizeof(reponse.nom_fichier));
                     struct stat st;
@@ -129,24 +128,18 @@ int main(int argc, char *argv[]) {
         perror("fork");
         exit(1);
     }
-
-    if (pid_reponse == 0) { // Code du fils traiterReponse
-        close(tube_reponse[1]); // Fermeture du descripteur d'écriture du tube dans le fils
-        close(tube_traiter[0]); // Fermeture du descripteur de lecture du tube dans le fils
-        close(tube_traiter[1]); // Fermeture du descripteur d'écriture du tube dans les fils
-        // Dans le fils traiterRéponse
-    while (1) {
+    
+    if (pid_reponse == 0) {
+        close(tube_reponse[1]);
+        close(tube_traiter[0]);
+        close(tube_traiter[1]);
         ReponseFichier reponse;
-        ssize_t bytes_read = read(tube_reponse[0], &reponse, sizeof(reponse));
-        if (bytes_read == -1) {
-            perror("read");
-            exit(2);
-        } else if (bytes_read == 0) {
-            break; // Fin de la transmission des informations
-        }
-        // Afficher les informations du fichier
+        while (ssize_t bytes_read = read(tube_reponse[0], &reponse, sizeof(reponse))>0) {
+            if (bytes_read == -1) {
+                perror("read");
+                exit(2);
+            }
         printf("[%s] : Inode %d, Taille %lld, Magic Number %s\n", reponse.nom_fichier, reponse.num_inode, (long long)reponse.taille, reponse.magic_number);
-        // Si l'option -v est activée, exécuter la commande spécifiée avec le fichier en argument
         if (commande != NULL) {
             executerCommande(commande, reponse.nom_fichier);
         }
@@ -157,9 +150,9 @@ int main(int argc, char *argv[]) {
     while ((entry = readdir(dir)) != NULL) {
         char chemin[MAX_PATH_LENGTH];
         snprintf(chemin, sizeof(chemin), "%s/%s", repertoire, entry->d_name);
-        if (access(chemin, F_OK) == 0) { // Vérifier si le fichier est accessible
-            if (entry->d_type == DT_REG) { // Vérifier si c'est un fichier ordinaire
-                write(tube_traiter[1], chemin, strlen(chemin) + 1); // Envoyer le nom du fichier au fils traiterFichier
+        if (access(chemin, F_OK) == 0) {
+            if (entry->d_type == DT_REG) {
+                write(tube_traiter[1], chemin, strlen(chemin) + 1);
             }
         }
     }
@@ -168,20 +161,13 @@ int main(int argc, char *argv[]) {
     perror("opendir");
     exit(3);
     }
-    
-    // Attente de la fin des fils traiterFichier
     for (int i = 0; i < N; i++) {
         wait(NULL);
     }
-
-    // Attente de la fin du fils traiterReponse
     wait(NULL);
-
-    // Fermeture des tubes
     close(tube_traiter[0]);
     close(tube_traiter[1]);
     close(tube_reponse[0]);
     close(tube_reponse[1]);
-
     return 0;
 }

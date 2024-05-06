@@ -1,0 +1,19 @@
+2
+1)Ensemble de règles définissant le mode de communication entre deux ordinateurs.
+2)La commande GET, les réponses sont OK code 200, No Content 204 et Not Found 404.
+3) 322octets, le site web est http://licinfo.deptinfo.fr/
+4) 448+33741octets, ça représente la page d'accueil du site de la licence informatique de toulouse
+5) voir google doc
+
+3
+1) Représentation visuelle d’un jeu de données géographiques dans un environnement cartographique numérique. De manière conceptuelle, une couche est une tranche ou une strate de la réalité géographique dans une zone donnée. 
+2) 7 Ethernet 14 (couche 1 Physique) /IPV4 20 (couche 3 Réseau) / TCP 32 (couche 4 Transport) /HTTP 322 (couche 7 Application)
+  96 Ethernet 14(couche 1 Physique) / IPV4 20 (couche 3 Réseau) / UDP 8 (couche 4 transport) / DNS 31 (couche 7 application)
+  797 Ethernet 32 (couche 1 Physiaue) / ARP 28 (couche 2 Liaison)
+
+4
+1) le port 80, et port 37574 pour 141.115.64.47
+2) Le protocole Ethernet utilise le type dans se cas IPV4 (0x0800)
+LE protocole Ipv4 utilise le protocol ici TCP (6)
+et TCP utilise les ports
+		
