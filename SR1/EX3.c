@@ -4,15 +4,14 @@
 #include <sys/types.h>
 #include <unistd.h>
 #include <wait.h>
-#include <sys/time.h>
 #define N 3
 
 
 void Afficher(int i,int succ){
     for (int n = 0; n<N; n++){
-        printf("[%d]",i);
+        printf("[%d] mon pid %d, mon succ %d\n", i,getpid(),succ);
     }
-    printf("[%d] mon pid %d, mon succ %d\n", i,getpid(),succ);
+    
 }
 
 int main(){
@@ -27,14 +26,17 @@ int main(){
         } else if (!pid){
             Afficher(i,succ);
             exit(i);
-        } else {
-            int retour;
-            waitpid(pid,&retour,0);
-            printf("[père] mon fils %d, numero %d est terminé\n", pid,WEXITSTATUS(retour)); 
-        }
+        } 
         succ=pid;
     }
+    
     Afficher(i,succ);
+    for (int i =0;i<4;i++){
+        int retour;
+        wait(&retour);
+        printf("[père] mon fils %d, numero %d est terminé\n", pid,WEXITSTATUS(retour)); 
+    }
+    
     printf("[père] j'ai fini\n");
     exit (0);
 }
