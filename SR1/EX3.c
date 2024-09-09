@@ -5,12 +5,14 @@
 #include <unistd.h>
 #include <wait.h>
 #include <sys/time.h>
+#define N 3
 
 
 void Afficher(int i,int succ){
-    for (int n=0; n<1; n++){
-        printf("[%d] mon pid %d, mon succ %d\n", i,getpid(),succ);
+    for (int n = 0; n<N; n++){
+        printf("[%d]",i);
     }
+    printf("[%d] mon pid %d, mon succ %d\n", i,getpid(),succ);
 }
 
 int main(){
@@ -25,14 +27,14 @@ int main(){
         } else if (!pid){
             Afficher(i,succ);
             exit(i);
+        } else {
+            int retour;
+            waitpid(pid,&retour,0);
+            printf("[père] mon fils %d, numero %d est terminé\n", pid,WEXITSTATUS(retour)); 
         }
         succ=pid;
     }
     Afficher(i,succ);
-    int retour;
-    while ((waitpid(pid,&retour,0))!=-1){
-        printf("[père] mon fils %d, numero %d est terminé\n", pid,WEXITSTATUS(retour));
-    }
     printf("[père] j'ai fini\n");
     exit (0);
 }
