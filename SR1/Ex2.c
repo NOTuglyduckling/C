@@ -14,4 +14,4 @@ int main (void){
     }else{
         printf("[fils]%d%d\n",getppid(),getpid());
     }
-}
+}fprintf(stderr,"%s n'est pas un entier\n",argv[1]);
