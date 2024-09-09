@@ -3,8 +3,15 @@
 #include <stdlib.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <wait.h>
 #include <sys/time.h>
-#define N 10;
+
+
+void Afficher(int i,int succ){
+    for (int n=0; n<1; n++){
+        printf("[%d] mon pid %d, mon succ %d\n", i,getpid(),succ);
+    }
+}
 
 int main(){
     int i;
@@ -30,8 +37,3 @@ int main(){
     exit (0);
 }
 
-void Afficher(int i,int succ){
-    for (int n=0; n<N; n++){
-        printf("[%d] mon pid %d, mon succ %d", i,getpid(),succ);
-    }
-}
