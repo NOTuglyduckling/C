@@ -5,7 +5,11 @@
 
 
 int main (int argc, char * argv[]){
+<<<<<<< Updated upstream
     if (argc < 2){
+=======
+    if (argc != 2){
+>>>>>>> Stashed changes
         fprintf(stderr,"Usage : %s ENV\n",argv[0]);
         exit(1);
     }
