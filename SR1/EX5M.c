@@ -41,7 +41,7 @@ int main(int argc,char * argv[]){
     }
 
     close(file);
-    if (close(filec)){
+    if (close(filec)==-1){
         perror("Erreur close");
         exit(6);
     }

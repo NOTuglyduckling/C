@@ -12,7 +12,7 @@ int main(int argc, char* argv[]){
     if(argc!=4){
         fprintf(stderr,"Usage : %s Command fichierIn fichierOut\n",argv[0]);
         exit(1);}
-    in= open(argv[2],O_WRONLY);
+    in= open(argv[2],O_RDONLY);
     if (in==-1){
         perror(argv[2]);
         exit(2);}

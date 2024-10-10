@@ -29,22 +29,23 @@ int main(int argc, char * argv[]){
 
     while((NBr==NBc)&&(NBr=read(sour,Bloc,TAILLE_BLOC)>0)){
         NBc=write(dst,Bloc,NBr);}
-    int exit_status=0;
+        
     if (NBr<0){
         perror(argv[1]);
         exit_status=4;
-    } if ((NBc<0)||(NBc<NBr)){
+    }
+    if ((NBc<0)||(NBc<NBr)){
         if (NBr<0){
             perror(argv[2]);
         } else {
             fprintf(stderr,"Erreur : écriture intérompue dans %s!\n",argv[2]);
         }
-        exit_status=5;
+        exit(4);
     }
     close(sour);
     if(close(dst)==-1){
         perror(argv[2]);
-        exit_status=5;
+        exit(5);
     }
-    exit(exit_status);
+    exit(0);
 }

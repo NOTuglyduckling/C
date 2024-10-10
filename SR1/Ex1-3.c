@@ -15,16 +15,14 @@ int main (int argc, char * argv[]){
         long int val = strtol(argv[i],&endptr,10);
         if (errno!=0){
             perror("Echec conversion");
-        else {
+        } else {
             if (endptr == argv[i]){
                 printf("%s n'est pas valide \n", argv[i]);
             } else{
                 printf("Enter %d : %ld \n", i, val);
             }
         }
-            exit(2);
+        exit(2);
         }
-        printf("%ld\n",val);
-    }
     exit(0);
 }
