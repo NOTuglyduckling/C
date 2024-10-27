@@ -105,14 +105,33 @@ Queue* shuntingYard(Queue* infix){
 		} else if (token_is_left_bracket(token)){
 			stack_push(operators,token);
 		} else if (token_is_right_bracket(token)){
-			while (!stack_empty(operatorStack) && 
-					!token_is_left_bracket(stack_top(operatorStack))){
+			while (!stack_empty(operators) && 
+					!token_is_left_bracket(stack_top(operators))){
 				Token* operator = stack_top(operators);
 				stack_pop(operators);
 				queue_push(output,operator);
 			}
+			if (!stack_empty(operators) && 
+				token_is_left_bracket(stack_top(operators))){
+				Token* leftBracket = stack_top(operators);
+				stack_pop(operators);
+				delete_token(leftBracket);
+			} else {
+				fprintf(stderr,"Error : parenthèse non fermée.");
+				return;
+			}
 		}
 	}
+	while (!stack_empty(operators)){
+		Token* operator = stack_top(operators);
+		if (token_is_bracket(operator)){
+			fprintf(stderr,"Error : parenthèse non fermée");
+			return;
+		}
+		stack_pop(operators);
+		queue_push(output,operator);
+	}
+	delete_stack(operators);
 }
 
 /** Main function for testing.
