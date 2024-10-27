@@ -56,7 +56,7 @@ int main(){
                 sleep(1);
                 int martin;
                 while (read(Etat[0],&martin,sizeof(int))>0){
-                    write(Remplir[1],&e,sizeof(int));
+                    write(Remplir[1],&martin,sizeof(int));
                 }
             }
             close(Remplir[1]);

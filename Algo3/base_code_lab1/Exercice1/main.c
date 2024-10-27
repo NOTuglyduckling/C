@@ -40,7 +40,12 @@ int main(int argc, char **argv){
 	for ( int i=0; i<n; ++i ) {
 		int v = readInt(input);
 		theStack = push(theStack, v);
+		if (overflow(theStack)){
+			perror(argv[1]);
+			return 1;
+		}
 	}
+	
 
 	dump(theStack,stderr);
 
