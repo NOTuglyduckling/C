@@ -1,3 +1,0 @@
-j'ai eu des probèmes avec printf et mon char pointer "buf" de getline que j'ai du rechercher sur stack overflow pour au final comprendre comment l'utiliser correctemeny
-Pendant un long moment j'avais des problèmes de segmentation fault que j'ai resolu avec plus de paramètres dans les if
-et avec les puissances j'avais oublier de check qu'il n'y avais pas de symboles collés au chiffres sans espaces entre.

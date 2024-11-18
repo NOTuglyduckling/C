@@ -22,7 +22,7 @@ void parcourir_sous_arborescence(const char *repertoire, int *compteur) {
         char chemin[1024];
         snprintf(chemin, sizeof(chemin), "%s/%s", repertoire, entree->d_name);
 
-        if (stat(chemin, &infos) == -1) {
+        if (lstat(chemin, &infos) == -1) {
             perror("stat");
             exit(2);
         }
