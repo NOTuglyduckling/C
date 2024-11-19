@@ -1,7 +1,9 @@
 CC=gcc
 CFLAGS=-std=c99 -Wextra -Wall -Werror -pedantic 
 LDFLAGS=-lm
-
+## valgrind --leak-check=full -s ./list_test 5
+#gdb ./list_test
+#run 5
 ECHO = @
 ifeq ($(VERBOSE),1)
 	ECHO=

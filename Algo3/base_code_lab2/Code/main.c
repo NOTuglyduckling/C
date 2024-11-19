@@ -24,6 +24,9 @@ void print_queue(FILE* f, Queue* q);
 bool issymbol(const char c);
 Queue* stringToTokenQueue(const char* expression);
 void computeExpressions(FILE* input);
+Queue* shuntingYard(Queue* infix);
+Token* evaluateOperator(Token* arg1,Token* op,Token* arg2);
+float evaluateExpression(Queue* postfix);
 
 
 
@@ -32,19 +35,33 @@ void computeExpressions(FILE* input) {
     size_t size = 0;
 
     while (getline(&buf, &size, input) != -1) {
-        printf("Input	: %s", buf);
-		Queue* queue = stringToTokenQueue(buf);
-		printf("Infix	: ");
-		print_queue(stdout,queue);
-		printf("\n\n");
-		while (!queue_empty(queue)){
-			const Token* token = queue_top(queue);
-			queue_pop(queue);
+        printf("Input	 : %s", buf);
+		Queue* Infix = stringToTokenQueue(buf);
+		printf("Infix	 : ");
+		print_queue(stdout,Infix);
+		printf("\n");
+		Queue* Postfix = shuntingYard(Infix);
+		printf("Postfix  : ");
+		print_queue(stdout,Postfix);
+		printf("\n");
+		float result = evaluateExpression(Postfix);
+		printf("Evaluate : %f\n\n",result);
+		while (!queue_empty(Infix)){
+			const Token* token = queue_top(Infix);
+			queue_pop(Infix);
 			if (token != NULL){
 				delete_token((ptrToken*)&token);
 			}
 		}
-		delete_queue((ptrQueue*)&queue);
+		delete_queue((ptrQueue*)&Infix);
+		while (!queue_empty(Postfix)){
+			const Token* token = queue_top(Postfix);
+			queue_pop(Postfix);
+			if (token != NULL){
+				delete_token((ptrToken*)&token);
+			}
+		}
+		delete_queue((ptrQueue*)&Postfix);
 	}
     free(buf);
 }
@@ -63,14 +80,14 @@ Queue* stringToTokenQueue(const char* expression){
 	Queue* queue = create_queue();
 	const char* curpos = expression;
 	while (*curpos != '\0'){
-		while ((*curpos == ' '|| *curpos =='\n')&& *curpos != '\0'){
+		while ((*curpos == ' '|| *curpos =='\n')){
 			curpos++;
 		}
-		if (issymbol(*curpos)){
+		if (issymbol(*curpos) && *curpos != '\0'){
 			Token* t = create_token_from_string(curpos,1);
 			queue_push (queue,t);
 			curpos++;
-		} else {
+		} else if (*curpos != '\0'){
 			int taille = 0;
 			while ( curpos[taille] != ' ' && curpos[taille]!='\n' && 
 					curpos[taille] != '\0' && !issymbol(curpos[taille]))
@@ -85,53 +102,119 @@ Queue* stringToTokenQueue(const char* expression){
 
 Queue* shuntingYard(Queue* infix){
 	Queue* output = create_queue();
-	Stack* operators = create_stack();
+	Stack* operators = create_stack(queue_size(infix));
 	while(!queue_empty(infix)){
-		Token* token = queue_pop(infix);
+		const Token* token = queue_top(infix);
+		queue_pop(infix);
 		if (token_is_number(token)){
 			queue_push(output,token);
 		}
 		else if (token_is_operator(token)){
 			while(!stack_empty(operators) && 
-					((operator_precedence(stack_top(operators)) > operator_precedence(token)) ||
-            		(operator_precedence(stack_top(operators)) == operator_precedence(token) &&
-            		operator_is_left_associative(token))) &&
-            		!token_is_left_bracket(stack_top(operators))){
-				Token* operator = stack_top(operators);
+					token_is_operator(stack_top(operators))&&
+					((token_operator_priority(stack_top(operators)) > token_operator_priority(token)) ||
+            		(token_operator_priority(stack_top(operators)) == token_operator_priority(token) &&
+            		token_operator_leftAssociative(token))) &&
+					(!token_is_parenthesis(stack_top(operators)) || (token_is_parenthesis(stack_top(operators))&&
+            		token_parenthesis(stack_top(operators))!='('))){
+				const Token* operator = stack_top(operators);
 				stack_pop(operators);
 				queue_push(output,operator);
 			}
 			stack_push(operators,token);
-		} else if (token_is_left_bracket(token)){
-			stack_push(operators,token);
-		} else if (token_is_right_bracket(token)){
-			while (!stack_empty(operators) && 
-					!token_is_left_bracket(stack_top(operators))){
-				Token* operator = stack_top(operators);
-				stack_pop(operators);
-				queue_push(output,operator);
-			}
-			if (!stack_empty(operators) && 
-				token_is_left_bracket(stack_top(operators))){
-				Token* leftBracket = stack_top(operators);
-				stack_pop(operators);
-				delete_token(leftBracket);
+		} else if (token_is_parenthesis(token)){
+			if (token_parenthesis(token)=='('){
+				stack_push(operators,token);
 			} else {
-				fprintf(stderr,"Error : parenthèse non fermée.");
-				return;
+				while (!stack_empty(operators) && 
+						(!token_is_parenthesis(stack_top(operators)) || 
+						(token_is_parenthesis(stack_top(operators))&&
+						token_parenthesis(stack_top(operators))!='('))){
+					const Token* operator = stack_top(operators);
+					stack_pop(operators);
+					queue_push(output,operator);
+				}
+				if (!stack_empty(operators) && 
+						token_is_parenthesis(stack_top(operators))&&
+						token_parenthesis(stack_top(operators))=='('){
+					const Token* leftBracket = stack_top(operators);
+					stack_pop(operators);
+					delete_token((ptrToken*)&leftBracket);
+				} else {
+					fprintf(stderr,"Error : parenthèse non fermée.");
+				}
 			}
 		}
 	}
 	while (!stack_empty(operators)){
-		Token* operator = stack_top(operators);
-		if (token_is_bracket(operator)){
+		const Token* operator = stack_top(operators);
+		if (token_is_parenthesis(operator)){
 			fprintf(stderr,"Error : parenthèse non fermée");
-			return;
 		}
 		stack_pop(operators);
 		queue_push(output,operator);
 	}
-	delete_stack(operators);
+	delete_stack((ptrStack*)&operators);
+	return output;
+}
+
+float evaluateExpression(Queue* postfix){
+	Stack* stack = create_stack(queue_size(postfix));
+	while(!queue_empty(postfix)){
+		const Token* current = queue_top(postfix);
+		queue_pop(postfix);
+		if (token_is_number(current)) {
+            printf("Pushing number to stack: %f\n", token_value(current));
+            stack_push(stack, (Token*)current);
+        } else if (token_is_operator(current)){
+			if (stack_size(stack) < 2) {
+                fprintf(stderr, "Error: Quantité insuffisante d'opérandes.\n");
+                delete_stack((ptrStack*)&stack);
+                return 0.0;
+            }
+			Token* arg2 = (Token*) stack_top(stack);
+			stack_pop(stack);
+			Token* arg1 = (Token*) stack_top(stack);
+			stack_pop(stack);
+			Token* value =  evaluateOperator((Token*)arg1,(Token*)current,(Token*)arg2);
+			stack_push(stack,value);
+			printf("Applying operator '%c' to operands %f and %f\n", token_operator(current), token_value(arg1), token_value(arg2));
+			delete_token(&arg1);
+            delete_token(&arg2);
+		}
+	}
+	printf("here");
+	const Token* endvalue = stack_top(stack);
+	float result = token_value(endvalue);
+	stack_pop(stack);
+	delete_token((ptrToken*)endvalue);
+	delete_stack((ptrStack*)&stack);
+	return result;
+}
+
+Token* evaluateOperator(Token* arg1,Token* op,Token* arg2){
+	char operator = token_operator(op);
+	float val1 = token_value(arg1);
+	float val2 = token_value(arg2);
+	switch (operator) {
+        case '+':
+            return create_token_from_value(val1 + val2);
+        case '-':
+            return create_token_from_value(val1 - val2);
+        case '*':
+            return create_token_from_value(val1 * val2);
+        case '/':
+            if (val2 == 0) {
+                fprintf(stderr, "Error: Division par zero.\n");
+                return create_token_from_value(0);
+            }
+            return create_token_from_value(val1 / val2);
+        case '^':
+            return create_token_from_value(pow(val1, val2));
+        default:
+            fprintf(stderr, "Error: Operateur inconnu '%c'.\n", operator);
+            return create_token_from_value(0);
+    }
 }
 
 /** Main function for testing.
