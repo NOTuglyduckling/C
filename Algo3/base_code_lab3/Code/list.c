@@ -27,10 +27,15 @@ struct s_List {
 	int size;
 };
 
+typedef struct {
+    LinkedElement* head;
+    LinkedElement* tail;
+} SubList;
+
 
 /*-----------------------------------------------------------------*/
 
-LList* list_create(void) {
+List* list_create(void) {
     List* l = (List*) malloc(sizeof(List));
     LinkedElement* sentinel = (LinkedElement*) malloc(sizeof(LinkedElement));
     sentinel->next = sentinel;
@@ -241,25 +246,33 @@ List* list_sort(List* l, OrderFunctor f) {
 
 SubList list_split(SubList l) {
     if (!l.head || l.head == l.tail) {
-        // Si la sous-liste contient 0 ou 1 élément, pas besoin de la diviser
-        return l;
+        SubList empty = {NULL, NULL};
+        return empty;
     }
 
     LinkedElement* slow = l.head;
-    LinkedElement* fast = l.head;
+    LinkedElement* fast = l.head->next;  // Start fast one step ahead
 
-    // Utilisation de deux pointeurs pour trouver le milieu de la liste
+    // Find middle using slow/fast pointer technique
     while (fast != l.tail && fast->next != l.tail) {
         slow = slow->next;
-        fast = fast->next->next;
+        fast = fast->next;
+        if (fast != l.tail) {  // Check before second step
+            fast = fast->next;
+        }
     }
 
+    // Create right sublist
     SubList right;
     right.head = slow->next;
     right.tail = l.tail;
     
-    slow->next = NULL;  // Séparation des deux listes
+    // Update left sublist (original l)
     l.tail = slow;
+    slow->next = NULL;
+    if (right.head) {
+        right.head->previous = NULL;
+    }
 
     return right;
 }
@@ -324,11 +337,3 @@ SubList list_mergesort(SubList l, OrderFunctor f) {
     // Fusionner les sous-listes triées
     return list_merge(left_sorted, right_sorted, f);
 }
-
-
-typedef struct {
-    LinkedElement* head;
-    LinkedElement* tail;
-} SubList;
-
-
