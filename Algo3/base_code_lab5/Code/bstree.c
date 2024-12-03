@@ -78,16 +78,18 @@ BinarySearchTree* bstree_parent(const BinarySearchTree* t) {
 void bstree_add(ptrBinarySearchTree* t, int v) {
 	assert(!bstree_empty(t));
     ptrBinarySearchTree* cur = t; 
+    BinarySearchTree* par = NULL;
     while(*cur){
         if (v==bstree_key(*cur))
             return;
+        par=*cur;
         if (v>bstree_key(*cur))
-            cur = &(*cur)->right;
+            cur = &((*cur)->right);
         else
-            cur = &(*cur)->left;
+            cur = &((*cur)->left);
     }
     *cur = bstree_cons(NULL, NULL, v);
-    bstree_delete(cur);
+    (*cur)->parent=par;
 }
 
 
@@ -126,15 +128,25 @@ void bstree_remove(ptrBinarySearchTree* t, int v) {
 /*------------------------  BSTreeVisitors  -----------------------------*/
 
 void bstree_depth_prefix(const BinarySearchTree* t, OperateFunctor f, void* environment) {
-    (void)t; (void) f; (void)environment;
+    if (bstree_empty(t)) return;
+    f(t, environment);
+    bstree_depth_prefix(t->left, f, environment);
+    bstree_depth_prefix(t->right, f, environment);
 }
 
+
 void bstree_depth_infix(const BinarySearchTree* t, OperateFunctor f, void* environment) {
-    (void)t; (void) f; (void)environment;
+    if (bstree_empty(t)) return;
+    bstree_depth_infix(t->left, f, environment);
+    f(t, environment);
+    bstree_depth_infix(t->right, f, environment);
 }
 
 void bstree_depth_postfix(const BinarySearchTree* t, OperateFunctor f, void* environment) {
-    (void)t; (void) f; (void)environment;
+    if (bstree_empty(t)) return;
+    bstree_depth_postfix(t->left, f, environment);
+    bstree_depth_postfix(t->right, f, environment);
+    f(t, environment);
 }
 
 void bstree_iterative_breadth(const BinarySearchTree* t, OperateFunctor f, void* environment) {
