@@ -223,7 +223,7 @@ List* list_map(List* l, Functor f, void* environment) {
 
 /*-----------------------------------------------------------------*/
 
-#if 0
+#if 1
 // ############################################################ 1er Essai ######################################################################## 
 SubList list_split(SubList l) {
     SubList right = {NULL, NULL};  // Creation de la demi liste droite
@@ -399,6 +399,7 @@ List* list_sort(List* l, OrderFunctor f) {
     SubList sublist;
     sublist.head = l->sentinel->next;
     sublist.tail = l->sentinel->previous;
+    sublist.tail->next =NULL;
     
     SubList sorted_sublist = list_mergesort(sublist, f);
 
