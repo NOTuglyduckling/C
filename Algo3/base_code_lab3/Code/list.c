@@ -249,7 +249,10 @@ SubList list_split(SubList l) {
     
     while (fast->next != l.tail && fast->next->next != l.tail) { // j'ai également essayer (fast!=l.tail->previous &&fast!=l.tail->previous->previous)
         slow = slow->next;
-        fast = fast->next->next;
+        fast = fast->next;
+        if (fast != l.tail) {  // Check before second step
+            fast = fast->next;
+        }
     }
 
     // Le curseur lent pointe le milieu
