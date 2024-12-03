@@ -94,14 +94,31 @@ void bstree_add(ptrBinarySearchTree* t, int v) {
 
 
 const BinarySearchTree* bstree_search(const BinarySearchTree* t, int v) {
-    (void)t; (void)v;
-    return NULL;
+	assert(!bstree_empty(t));
+    ptrBinarySearchTree* cur = t; 
+    while(*cur){
+        if (v==bstree_key(*cur))
+            return *cur;
+        if (v>bstree_key(*cur))
+            cur = &((*cur)->right);
+        else
+            cur = &((*cur)->left);
+    }
+    return *cur;
 }
 
 const BinarySearchTree* bstree_successor(const BinarySearchTree* x) {
     assert(!bstree_empty(x));
-    (void)x;
-    return NULL;
+    ptrBinarySearchTree* cur = x; 
+    if (!bstree_empty(bstree_right(cur))){
+        cur = &((*cur)->right);
+        while (*cur){
+            cur = &((*cur)->left);
+        }
+    } else {
+        cur = &((*cur)->parent);
+    }
+    re
 }
 
 const BinarySearchTree* bstree_predecessor(const BinarySearchTree* x) {
