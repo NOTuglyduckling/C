@@ -1,9 +1,3 @@
-/* =================================================================== */
-// Progrmame Client à destination d'un joueur qui doit deviner la case
-// du trésor. Après chaque coup le résultat retourné par le serveur est
-// affiché. Le coup consite en une abcsisse et une ordonnée (x, y).
-/* =================================================================== */
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -19,21 +13,18 @@
 #define YELLOW  "\033[33m"
 #define MAGENTA "\033[35m"
 
-//SERVEURNAME "146.59.237.169"
-
 /* ====================================================================== */
 /*                  Affichage du jeu en mode texte brut                   */
 /* ====================================================================== */
 void afficher_jeu(int jeu[N][N], int res, int points, int coups) {
-
     printf("\n************ TROUVEZ LE TRESOR ! ************\n");
     printf("    ");
-    for (int i=0; i<10; i++)
-        printf("  %d ", i+1);
+    for (int i = 0; i < N; i++)
+        printf("  %d ", i + 1);
     printf("\n    -----------------------------------------\n");
-    for (int i=0; i<10; i++){
-        printf("%2d  ", i+1);
-        for (int j=0; j<10; j++) {
+    for (int i = 0; i < N; i++) {
+        printf("%2d  ", i + 1);
+        for (int j = 0; j < N; j++) {
             printf("|");
             switch (jeu[i][j]) {
                 case -1:
@@ -59,27 +50,22 @@ void afficher_jeu(int jeu[N][N], int res, int points, int coups) {
     printf("Pts dernier coup %d | Pts total %d | Nb coups %d\n", res, points, coups);
 }
 
-
 /* ====================================================================== */
 /*                    Fonction principale                                 */
 /* ====================================================================== */
 int main(int argc, char **argv) {
-
     int jeu[N][N];
     int lig, col;
     int res = -1, points = 0, coups = 0;
 
-
     struct sockaddr_in serverSockAddr;
-    struct hostent *serverHostEnt;
-    long hostAddr;
-    long status;
     char buffer[512];
-    int sock_id, server_port;
+    int to_server_socket;
     char server_ip[16];
+    int server_port;
 
     /* Init args */
-    if (argc!=3) {
+    if (argc != 3) {
         printf("Usage: %s adresse_ip port\n", argv[0]);
         exit(EXIT_FAILURE);
     }
@@ -88,66 +74,81 @@ int main(int argc, char **argv) {
     server_port = atoi(argv[2]);
 
     /* Init jeu */
-    for (int i=0; i<N; i++)
-        for (int j=0; j<N; j++)
+    for (int i = 0; i < N; i++)
+        for (int j = 0; j < N; j++)
             jeu[i][j] = -1;
 
-    /* Creation socket TCP  GOOOOOOODDDDDDD*/
-    int to_server_socket=-1;
-    if ( (to_server_socket = socket(AF_INET,SOCK_STREAM,0)) < 0){
-        printf("Probleme de la creation socket client\n");
-        exit(0);
+    /* Creation socket TCP */
+    if ((to_server_socket = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
+        perror("Socket creation failed");
+        exit(EXIT_FAILURE);
     }
-    
 
-    /* Init caracteristiques serveur distant (struct sockaddr_in) */
+    /* Init server characteristics */
     memset(&serverSockAddr, 0, sizeof(serverSockAddr));
     serverSockAddr.sin_family = AF_INET;
-    serverSockAddr.sin_port = htons(server_port); /* host to network byte order */
-    serverSockAddr.sin_addr.s_addr = htonl(INADDR_ANY); /* any interface */
+    serverSockAddr.sin_port = htons(server_port);
 
-    /* Etablissement connexion TCP avec process serveur distant */
-    if(connect( to_server_socket,(struct sockaddr *)&serverSockAddr,sizeof(serverSockAddr)) < 0 ){
-        printf("Probleme de la demande de connection\n");
-        exit(0);
+    /* Convert server IP address */
+    if (inet_pton(AF_INET, server_ip, &serverSockAddr.sin_addr) <= 0) {
+        perror("Invalid server IP address");
+        close(to_server_socket);
+        exit(EXIT_FAILURE);
     }
 
-    /* Tentatives du joueur : stoppe quand tresor trouvé */
+    /* Establish TCP connection */
+    if (connect(to_server_socket, (struct sockaddr *)&serverSockAddr, sizeof(serverSockAddr)) < 0) {
+        perror("Connection to server failed");
+        close(to_server_socket);
+        exit(EXIT_FAILURE);
+    }
+
+    /* Game loop: stop when treasure is found */
     do {
         afficher_jeu(jeu, res, points, coups);
+
         printf("\nEntrer le numéro de ligne : ");
         scanf("%d", &lig);
         printf("Entrer le numéro de colonne : ");
         scanf("%d", &col);
 
-        /* Construction requête (serialisation en chaines de caractères) */
-        // TODO
+        /* Construct request (serialize as a string) */
+        snprintf(buffer, sizeof(buffer), "%d %d", lig, col);
 
-        /* Envoi de la requête au serveur (send) */
-        // TODO
+        /* Send the request to the server */
+        if (send(to_server_socket, buffer, strlen(buffer), 0) < 0) {
+            perror("Failed to send request");
+            close(to_server_socket);
+            exit(EXIT_FAILURE);
+        }
 
-        /* Réception du resultat du coup (recv) */
-        // TODO
+        /* Receive the result from the server */
+        int received = recv(to_server_socket, buffer, sizeof(buffer) - 1, 0);
+        if (received < 0) {
+            perror("Failed to receive response");
+            close(to_server_socket);
+            exit(EXIT_FAILURE);
+        }
+        buffer[received] = '\0';
 
-        /* Deserialisation du résultat en un entier */
-        // TODO
-        res = 0;
+        /* Deserialize the result */
+        sscanf(buffer, "%d", &res);
 
-        /* Mise à jour */
-        if (lig>=1 && lig<=N && col>=1 && col<=N)
-            jeu[lig-1][col-1] = res;
+        /* Update game state */
+        if (lig >= 1 && lig <= N && col >= 1 && col <= N)
+            jeu[lig - 1][col - 1] = res;
         points += res;
         coups++;
+    } while (res != 0);
 
-    } while (res);
-
-    /* Fermeture connexion TCP */
-    shutdown(to_server_socket,2);
+    /* Close TCP connection */
+    shutdown(to_server_socket, SHUT_RDWR);
     close(to_server_socket);
 
-    /* Terminaison du jeu : le joueur a trouvé le tresor */
+    /* End of game: treasure found */
     afficher_jeu(jeu, res, points, coups);
     printf("\nBRAVO : trésor trouvé en %d essai(s) avec %d point(s)"
-            " au total !\n\n", coups, points);
+           " au total !\n\n", coups, points);
+
     return 0;
 }
