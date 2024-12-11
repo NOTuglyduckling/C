@@ -144,14 +144,12 @@ BinarySearchTree* bstree_parent(const BinarySearchTree* t) {
 
 /* Obligation de passer l'arbre par référence pour pouvoir le modifier */
 void bstree_add(ptrBinarySearchTree* t, int v) {
-    // Gestion de l'arbre vide
     if (!*t) {
         *t = bstree_cons(NULL, NULL, v);
         (*t)->color = black;
         return;
     }
 
-    // Insertion standard BST
     ptrBinarySearchTree* cur = t; 
     BinarySearchTree* par = NULL;
     
@@ -446,15 +444,10 @@ BinarySearchTree* fixredblack_insert_case1(ptrBinarySearchTree x) {
 
     // Si l'oncle est rouge
     if (f && f->color == red) {
-        // Correction des couleurs
         p->color = black;
         f->color = black;
-        
-        if (pp) {
-            pp->color = red;
-            // Correction récursive
-            return fixredblack_insert_case1(pp);
-        }
+        pp->color = red;
+        return fixredblack_insert_case1(pp);
     }
 
     // Passer au cas suivant
@@ -490,7 +483,6 @@ BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x) {
         leftrotate(pp);
     }
 
-    // Correction des couleurs
     p->color = black;
     pp->color = red;
 
