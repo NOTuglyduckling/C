@@ -46,7 +46,7 @@ int main() {
     }
 
     // Listen for connections
-    if (listen(server_fd, 5) == -1) {
+    if (listen(server_fd, 1) == -1) {
         perror("Listen failed");
         close(server_fd);
         exit(EXIT_FAILURE);

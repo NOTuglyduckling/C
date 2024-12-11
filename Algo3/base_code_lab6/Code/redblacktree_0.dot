@@ -1,0 +1,55 @@
+digraph RedBlackTree {
+	graph [ranksep=0.5];
+	node [shape = record];
+
+	n11 [style=filled, fillcolor=red, fontcolor=white, label="{11|{<left>|<right>}}"];
+	lnil11 [style=filled, fillcolor=grey, label="NIL"];
+	n11:left:c -> lnil11:n [fillcolor=grey, headclip=false, tailclip=false]
+	rnil11 [style=filled, fillcolor=grey, label="NIL"];
+	n11:right:c -> rnil11:n [headclip=false, tailclip=false]
+	n12 [style=filled, fillcolor=grey, fontcolor=white, label="{12|{<left>|<right>}}"];
+	n12:left:c -> n11:n [headclip=false, tailclip=false]
+	n12:right:c -> n13:n [headclip=false, tailclip=false]
+	n13 [style=filled, fillcolor=red, fontcolor=white, label="{13|{<left>|<right>}}"];
+	lnil13 [style=filled, fillcolor=grey, label="NIL"];
+	n13:left:c -> lnil13:n [fillcolor=grey, headclip=false, tailclip=false]
+	rnil13 [style=filled, fillcolor=grey, label="NIL"];
+	n13:right:c -> rnil13:n [headclip=false, tailclip=false]
+	n14 [style=filled, fillcolor=red, fontcolor=white, label="{14|{<left>|<right>}}"];
+	n14:left:c -> n3:n [headclip=false, tailclip=false]
+	n14:right:c -> n17:n [headclip=false, tailclip=false]
+	n9 [style=filled, fillcolor=red, fontcolor=white, label="{9|{<left>|<right>}}"];
+	lnil9 [style=filled, fillcolor=grey, label="NIL"];
+	n9:left:c -> lnil9:n [fillcolor=grey, headclip=false, tailclip=false]
+	rnil9 [style=filled, fillcolor=grey, label="NIL"];
+	n9:right:c -> rnil9:n [headclip=false, tailclip=false]
+	n10 [style=filled, fillcolor=grey, fontcolor=white, label="{10|{<left>|<right>}}"];
+	n10:left:c -> n9:n [headclip=false, tailclip=false]
+	rnil10 [style=filled, fillcolor=grey, label="NIL"];
+	n10:right:c -> rnil10:n [headclip=false, tailclip=false]
+	n15 [style=filled, fillcolor=red, fontcolor=white, label="{15|{<left>|<right>}}"];
+	n15:left:c -> n10:n [headclip=false, tailclip=false]
+	n15:right:c -> n16:n [headclip=false, tailclip=false]
+	n16 [style=filled, fillcolor=grey, fontcolor=white, label="{16|{<left>|<right>}}"];
+	lnil16 [style=filled, fillcolor=grey, label="NIL"];
+	n16:left:c -> lnil16:n [fillcolor=grey, headclip=false, tailclip=false]
+	rnil16 [style=filled, fillcolor=grey, label="NIL"];
+	n16:right:c -> rnil16:n [headclip=false, tailclip=false]
+	n17 [style=filled, fillcolor=grey, fontcolor=white, label="{17|{<left>|<right>}}"];
+	n17:left:c -> n15:n [headclip=false, tailclip=false]
+	n17:right:c -> n18:n [headclip=false, tailclip=false]
+	n18 [style=filled, fillcolor=grey, fontcolor=white, label="{18|{<left>|<right>}}"];
+	lnil18 [style=filled, fillcolor=grey, label="NIL"];
+	n18:left:c -> lnil18:n [fillcolor=grey, headclip=false, tailclip=false]
+	n18:right:c -> n19:n [headclip=false, tailclip=false]
+	n19 [style=filled, fillcolor=grey, fontcolor=white, label="{19|{<left>|<right>}}"];
+	lnil19 [style=filled, fillcolor=grey, label="NIL"];
+	n19:left:c -> lnil19:n [fillcolor=grey, headclip=false, tailclip=false]
+	n19:right:c -> n20:n [headclip=false, tailclip=false]
+	n20 [style=filled, fillcolor=red, fontcolor=white, label="{20|{<left>|<right>}}"];
+	lnil20 [style=filled, fillcolor=grey, label="NIL"];
+	n20:left:c -> lnil20:n [fillcolor=grey, headclip=false, tailclip=false]
+	rnil20 [style=filled, fillcolor=grey, label="NIL"];
+	n20:right:c -> rnil20:n [headclip=false, tailclip=false]
+
+}

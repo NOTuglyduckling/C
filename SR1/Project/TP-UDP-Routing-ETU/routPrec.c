@@ -29,7 +29,10 @@
 /* FONCTION PRINCIPALE : PEER PROCESSUS DE ROUTAGE ROLE RECEPTEUR ONLY */
 /* =================================================================== */
 int main(int argc, char **argv) {
-
+  if (argc != 4) {
+    printf("Usage: %s IDIP@ssRouter MyNumberRouter NeighborNumberRouter\n", argv[0]);
+    exit(1);
+  }
   // Usage routPrec IDIP@ssRouter  MyNumberRouter NeigborNumberRouter
   // Example routPrec 10.1.1.1 1 2
 
@@ -37,8 +40,6 @@ int main(int argc, char **argv) {
   char myId [32]; // String array representing the whole id of the Router
 
   routing_table_t myRoutingTable; //Routing TABLE
-
-
 
   /* Building ID Router from command args */
   sprintf(myId,"R%s %s",argv[2],argv[1]);
@@ -53,11 +54,63 @@ int main(int argc, char **argv) {
   printf("ROUTEUR : %d entrées initialement chargées \n",myRoutingTable.nb_entry);
   display_routing_table(&myRoutingTable,myId);
 
-  /* A COMPLETER PAR LES ETUDIANTS ...
-  ************************************/
+  // Create UDP socket
+  int sock = socket(AF_INET, SOCK_DGRAM, 0);
+  if (sock < 0) {
+    perror("Socket creation failed");
+    exit(2);
+  }
 
+  // Bind socket to receive data
+  struct sockaddr_in myAddr;
+  memset(&myAddr, 0, sizeof(myAddr));
+  myAddr.sin_family = AF_INET;
+  myAddr.sin_port = htons(NO_BASE_PORT + atoi(argv[2]));  // Receiver's port
+  myAddr.sin_addr.s_addr = inet_addr(LOCALHOST);
+
+  if (bind(sock, (struct sockaddr *)&myAddr, sizeof(myAddr)) < 0) {
+      perror("Bind failed");
+      close(sock);
+      exit(3);
+  }
+
+  // Receive number of entries
+  char buffer[BUF_SIZE_IN];
+  int received = recvfrom(sock, buffer, sizeof(buffer) - 1, 0, NULL, NULL);
+  if (received < 0) {
+      perror("Failed to receive number of entries");
+      close(sock);
+      exit(4);
+  }
+  buffer[received] = '\0';
+  int numEntries = atoi(buffer);
+
+  // Receive routing table entries
+  for (int i = 0; i < numEntries; i++) {
+      received = recvfrom(sock, buffer, sizeof(buffer) - 1, 0, NULL, NULL);
+      if (received < 0) {
+          perror("Failed to receive routing table entry");
+          continue;
+      }
+      buffer[received] = '\0';
+
+      // Add entry to routing table if not present
+      if (!is_present_entry_table(&myRoutingTable, buffer)) {
+          add_entry_routing_table(&myRoutingTable, buffer);
+      }
+  }
 
   // Display new content of my routing table
   display_routing_table(&myRoutingTable,myId);
-  exit(EXIT_SUCCESS);
- }
+  close(sock);
+  exit(0);
+}
+
+
+    
+
+    
+
+
+
+

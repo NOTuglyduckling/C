@@ -5,6 +5,26 @@
 #include <assert.h>
 #include "queue.h"
 
+/*------------------------- Rouge Noir ------------------------------*/
+
+typedef enum {red,black} NodeColor;
+
+void rightrotate(BinarySearchTree* y) ;
+void leftrotate(BinarySearchTree* x);
+
+void testrotateleft(BinarySearchTree *t){
+    leftrotate(t);
+}
+
+void testrotateright(BinarySearchTree *t){
+    rightrotate(t);
+}
+BinarySearchTree* grandparent(BinarySearchTree* n);
+BinarySearchTree* uncle(BinarySearchTree* n);
+BinarySearchTree* fixredblack_insert(ptrBinarySearchTree x);
+BinarySearchTree* fixredblack_insert_case1(ptrBinarySearchTree x);
+BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x);
+
 /*------------------------  BSTreeType  -----------------------------*/
 
 struct _bstree {
@@ -12,7 +32,36 @@ struct _bstree {
     BinarySearchTree* left;
     BinarySearchTree* right;
     int key;
+    NodeColor color;
 };
+
+/*-------------------------- Affichage Rouge Noir -------------------------*/
+
+void bstree_node_to_dot(const BinarySearchTree *t, void *stream) {
+    FILE *file = (FILE *) stream;
+    const char *color = (t->color == black) ? "grey" : "red";
+
+    printf("%d ", bstree_key(t));
+    fprintf(file, "\tn%d [style=filled, fillcolor=%s, fontcolor=white, label=\"{%d|{<left>|<right>}}\"];\n",
+            bstree_key(t), color, bstree_key(t));
+
+    if (bstree_left(t)) {
+        fprintf(file, "\tn%d:left:c -> n%d:n [headclip=false, tailclip=false]\n",
+                bstree_key(t), bstree_key(bstree_left(t)));
+    } else {
+        fprintf(file, "\tlnil%d [style=filled, fillcolor=grey, label=\"NIL\"];\n", bstree_key(t));
+        fprintf(file, "\tn%d:left:c -> lnil%d:n [fillcolor=grey, headclip=false, tailclip=false]\n",
+                bstree_key(t), bstree_key(t));
+    }
+    if (bstree_right(t)) {
+        fprintf(file, "\tn%d:right:c -> n%d:n [headclip=false, tailclip=false]\n",
+                bstree_key(t), bstree_key(bstree_right(t)));
+    } else {
+        fprintf(file, "\trnil%d [style=filled, fillcolor=grey, label=\"NIL\"];\n", bstree_key(t));
+        fprintf(file, "\tn%d:right:c -> rnil%d:n [headclip=false, tailclip=false]\n",
+                bstree_key(t), bstree_key(t));
+    }
+}
 
 /*------------------------  BaseBSTree  -----------------------------*/
 
@@ -34,6 +83,7 @@ BinarySearchTree* bstree_cons(BinarySearchTree* left, BinarySearchTree* right, i
     if (t->right != NULL)
         t->right->parent = t;
     t->key = key;
+    t->color = red;
     return t;
 }
 
@@ -94,20 +144,40 @@ BinarySearchTree* bstree_parent(const BinarySearchTree* t) {
 
 /* Obligation de passer l'arbre par référence pour pouvoir le modifier */
 void bstree_add(ptrBinarySearchTree* t, int v) {
-	assert(!bstree_empty(t));
+    // Cas arbre vide
+    if (!*t) {
+        *t = bstree_cons(NULL, NULL, v);
+        (*t)->color = black;
+        return;
+    }
+
+    // Insertion standard BST
     ptrBinarySearchTree* cur = t; 
     BinarySearchTree* par = NULL;
-    while(*cur){
-        if (v==bstree_key(*cur))
+    
+    while (*cur){
+        // Valeur déjà présente
+        if (v == bstree_key(*cur))
             return;
-        par=*cur;
-        if (v>bstree_key(*cur))
-            cur = &((*cur)->right);
-        else
-            cur = &((*cur)->left);
+        
+        par = *cur;
+        
+        // Navigation dans l'arbre
+        cur = (v > bstree_key(*cur)) 
+            ? &((*cur)->right) 
+            : &((*cur)->left);
     }
+
+    // Créer le nouveau nœud (rouge par défaut)
     *cur = bstree_cons(NULL, NULL, v);
-    (*cur)->parent=par;
+    (*cur)->parent = par;
+
+    // Correction des propriétés rouge-noir
+    BinarySearchTree* new_root = fixredblack_insert(*cur);
+    
+    // Mise à jour potentielle de la racine
+    if (new_root != *t)
+        *t = new_root;
 }
 
 
@@ -290,6 +360,146 @@ void bstree_remove(ptrBinarySearchTree* t, int v) {
   }
 }
 
+/*------------------------------EXERCICE 2------------------------------*/
+
+void leftrotate(BinarySearchTree* x) {
+    if (!x || !x->right) return;
+    BinarySearchTree* y = x->right;
+
+    x->right = y->left;
+    if (y->left) {
+        y->left->parent = x;
+    }
+
+    y->parent = x->parent;
+    if (x->parent) {
+        if (x == x->parent->left)
+            x->parent->left = y;
+        else 
+            x->parent->right = y;
+    }
+
+    y->left = x;
+    x->parent = y;
+}
+
+void rightrotate(BinarySearchTree* y) {
+    if (!y || !y->left) return;
+    BinarySearchTree* x = y->left;
+
+    y->left = x->right;
+    if (!bstree_empty(x->right)) {
+        x->right->parent = y;
+    }
+
+    x->parent = y->parent;
+    if (y->parent) {
+        if (y == y->parent->right)
+            y->parent->right = x;
+        else
+            y->parent->left = x;
+    }
+
+    x->right = y;
+    y->parent = x;
+}
+
+/*-----------------------------------------EXERCICE 3------------------------------------------*/
+
+BinarySearchTree* grandparent(BinarySearchTree* n) {
+    assert(!bstree_empty(n)&&!bstree_empty(n->parent)&&!bstree_empty(n->parent->parent));
+    return n->parent->parent;
+}
+
+
+BinarySearchTree* uncle(BinarySearchTree* n) {
+    assert(!bstree_empty(n)&&!bstree_empty(n->parent)&&!bstree_empty(n->parent->parent));
+    BinarySearchTree* pp = grandparent(n);
+    if (n->parent == pp->right)
+        return pp->left;
+    else
+        return pp->right;
+}
+
+
+// Fonction de vérification et de correction après insertion
+BinarySearchTree* fixredblack_insert(ptrBinarySearchTree x) {
+    assert(!bstree_empty(x));
+
+    // Cas racine
+    if (!x->parent) {
+        x->color = black;
+        return x;
+    }
+
+    // Passer aux cas de correction
+    return fixredblack_insert_case1(x);
+}
+
+// Premier cas de correction
+BinarySearchTree* fixredblack_insert_case1(ptrBinarySearchTree x) {
+    // Vérifications de sécurité
+    if (!x || !x->parent || !x->parent->parent) 
+        return x;
+
+    BinarySearchTree* p = x->parent;
+    BinarySearchTree* pp = grandparent(x);
+    BinarySearchTree* f = uncle(x);
+
+    // Si l'oncle est rouge
+    if (f && f->color == red) {
+        // Correction des couleurs
+        p->color = black;
+        f->color = black;
+        
+        if (pp) {
+            pp->color = red;
+            // Correction récursive
+            return fixredblack_insert_case1(pp);
+        }
+    }
+
+    // Passer au cas suivant
+    return fixredblack_insert_case2(x);
+}
+
+// Deuxième cas de correction
+BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x) {
+    // Vérifications de sécurité
+    if (!x || !x->parent || !x->parent->parent) 
+        return x;
+
+    BinarySearchTree* p = x->parent;
+    BinarySearchTree* pp = grandparent(x);
+
+    // Gestion des cas de rotation
+    if (x == p->right && p == pp->left) {
+        // Cas Left-Right
+        leftrotate(p);
+        x = x->left;
+    } else if (x == p->left && p == pp->right) {
+        // Cas Right-Left
+        rightrotate(p);
+        x = x->right;
+    }
+
+    // Mise à jour des pointeurs après rotation éventuelle
+    p = x->parent;
+    pp = grandparent(x);
+
+    // Rotation finale
+    if (x == p->left) {
+        rightrotate(pp);
+    } else {
+        leftrotate(pp);
+    }
+
+    // Correction des couleurs
+    p->color = black;
+    pp->color = red;
+
+    return p;
+}
 
 /*------------------------  BSTreeVisitors  -----------------------------*/
 
