@@ -436,7 +436,7 @@ BinarySearchTree* fixredblack_insert(ptrBinarySearchTree x) {
 
 // Premier cas de correction
 BinarySearchTree* fixredblack_insert_case1(ptrBinarySearchTree x) {
-    // Vérifications de sécurité
+    assert(!bstree_empty(x)&&!bstree_empty(x->parent));
     if (!x || !x->parent || !x->parent->parent) 
         return x;
 
@@ -463,9 +463,7 @@ BinarySearchTree* fixredblack_insert_case1(ptrBinarySearchTree x) {
 
 // Deuxième cas de correction
 BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x) {
-    // Vérifications de sécurité
-    if (!x || !x->parent || !x->parent->parent) 
-        return x;
+    assert(!bstree_empty(x)&&!bstree_empty(x->parent)&&!bstree_empty(x->parent->parent));
 
     BinarySearchTree* p = x->parent;
     BinarySearchTree* pp = grandparent(x);
