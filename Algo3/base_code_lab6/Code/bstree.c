@@ -144,7 +144,7 @@ BinarySearchTree* bstree_parent(const BinarySearchTree* t) {
 
 /* Obligation de passer l'arbre par référence pour pouvoir le modifier */
 void bstree_add(ptrBinarySearchTree* t, int v) {
-    // Cas arbre vide
+    // Gestion de l'arbre vide
     if (!*t) {
         *t = bstree_cons(NULL, NULL, v);
         (*t)->color = black;
@@ -156,28 +156,26 @@ void bstree_add(ptrBinarySearchTree* t, int v) {
     BinarySearchTree* par = NULL;
     
     while (*cur){
-        // Valeur déjà présente
         if (v == bstree_key(*cur))
             return;
         
         par = *cur;
         
-        // Navigation dans l'arbre
         cur = (v > bstree_key(*cur)) 
             ? &((*cur)->right) 
             : &((*cur)->left);
     }
 
-    // Créer le nouveau nœud (rouge par défaut)
+    // Création du nouveau nœud
     *cur = bstree_cons(NULL, NULL, v);
     (*cur)->parent = par;
 
     // Correction des propriétés rouge-noir
-    BinarySearchTree* new_root = fixredblack_insert(*cur);
+    BinarySearchTree* stop = fixredblack_insert(*cur);
     
-    // Mise à jour potentielle de la racine
-    if (new_root != *t)
-        *t = new_root;
+    // Mise à jour de la racine si nécessaire
+    if (stop && !stop->parent)
+        *t = stop;
 }
 
 
@@ -422,9 +420,9 @@ BinarySearchTree* uncle(BinarySearchTree* n) {
 }
 
 
-// Fonction de vérification et de correction après insertion
+// Fonction principale de correction après insertion
 BinarySearchTree* fixredblack_insert(ptrBinarySearchTree x) {
-    assert(!bstree_empty(x));
+    if (!x) return NULL;
 
     // Cas racine
     if (!x->parent) {
@@ -500,6 +498,7 @@ BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x) {
 
     return p;
 }
+
 
 /*------------------------  BSTreeVisitors  -----------------------------*/
 
