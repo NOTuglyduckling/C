@@ -25,6 +25,14 @@ BinarySearchTree* fixredblack_insert(ptrBinarySearchTree x);
 BinarySearchTree* fixredblack_insert_case1(ptrBinarySearchTree x);
 BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x);
 
+BinarySearchTree* fixredblack_remove(BinarySearchTree* p, BinarySearchTree* x);
+BinarySearchTree* fixredblack_remove_case1(BinarySearchTree* p, BinarySearchTree* x);
+BinarySearchTree* fixredblack_remove_case1_right(BinarySearchTree* p);
+BinarySearchTree* fixredblack_remove_case1_left(BinarySearchTree* p);
+BinarySearchTree* fixredblack_remove_case2(BinarySearchTree* p, BinarySearchTree* x);
+BinarySearchTree* fixredblack_remove_case2_right(BinarySearchTree* p);
+BinarySearchTree* fixredblack_remove_case2_left(BinarySearchTree* p);
+
 /*------------------------  BSTreeType  -----------------------------*/
 
 struct _bstree {
@@ -488,6 +496,125 @@ BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x) {
 
     return p;
 }
+
+/*-------------------------------EXERCICE 5----------------------------------*/
+
+BinarySearchTree* fixredblack_remove(BinarySearchTree* p, BinarySearchTree* x) {
+    // Cas 0 : Le nœud x est la racine
+    if (p == NULL) {
+        if (x != NULL) x->color = black;
+        return x;
+    }
+
+    // Identification des cas à traiter
+    BinarySearchTree* f = (x == p->left) ? p->right : p->left; // Frère de x
+    if (f->color == black) {
+        return fixredblack_remove_case1(p, x); // Cas 1
+    } else {
+        return fixredblack_remove_case2(p, x); // Cas 2
+    }
+}
+
+
+BinarySearchTree* fixredblack_remove_case1(BinarySearchTree* p,BinarySearchTree* x){
+    assert(!bstree_empty(p)&&!bstree_empty(x));
+    if (x==p->right)
+        return fixredblack_remove_case1_right(p);
+    return fixredblack_remove_case1_left(p);
+}
+
+BinarySearchTree* fixredblack_remove_case1_right(BinarySearchTree* p) {
+    BinarySearchTree* f = p->left; // Frère de x
+    BinarySearchTree* g = f->right;
+    BinarySearchTree* d = f->left;
+
+    if ((g == NULL || g->color == black) && (d == NULL || d->color == black)) {
+        f->color = red;
+        if (p->color == red) {
+            p->color = black;
+        } else {
+            return fixredblack_remove(p->parent, p);
+        }
+    } else if (d != NULL && d->color == red) {
+        rightrotate(p);
+        f->color = p->color;
+        p->color = black;
+        if (d != NULL) d->color = black;
+    } else if (g != NULL && g->color == red) {
+        leftrotate(f);
+        g->color = black;
+        f->color = red;
+        return fixredblack_remove_case1_right(p);
+    }
+
+    return p;
+}
+
+
+BinarySearchTree* fixredblack_remove_case1_left(BinarySearchTree* p) {
+    BinarySearchTree* f = p->right; // Frère de x
+    BinarySearchTree* g = f->left;
+    BinarySearchTree* d = f->right;
+
+    if ((g == NULL || g->color == black) && (d == NULL || d->color == black)) {
+        // Sous-cas : Les deux fils de f sont noirs
+        f->color = red;
+        if (p->color == red) {
+            p->color = black;
+        } else {
+            return fixredblack_remove(p->parent, p);
+        }
+    } else if (d != NULL && d->color == red) {
+        // Sous-cas : Le fils droit de f est rouge
+        leftrotate(p);
+        f->color = p->color;
+        p->color = black;
+        if (d != NULL) d->color = black;
+    } else if (g != NULL && g->color == red) {
+        // Sous-cas : Le fils gauche de f est rouge
+        rightrotate(f);
+        g->color = black;
+        f->color = red;
+        return fixredblack_remove_case1_left(p); // Rappel sur le nouveau sous-arbre
+    }
+
+    return p;
+}
+
+
+BinarySearchTree* fixredblack_remove_case2(BinarySearchTree* p, BinarySearchTree* x) {
+    if (x == p->left) {
+        return fixredblack_remove_case2_left(p);
+    } else {
+        return fixredblack_remove_case2_right(p);
+    }
+}
+
+BinarySearchTree* fixredblack_remove_case2_right(BinarySearchTree* p) {
+    BinarySearchTree* f = p->left; // Frère de x
+
+    // Rotation droite en p
+    rightrotate(p);
+    f->color = black;
+    p->color = red;
+
+    // Le nouveau frère de x devient noir
+    return fixredblack_remove_case1(p, p->right);
+}
+
+BinarySearchTree* fixredblack_remove_case2_left(BinarySearchTree* p) {
+    BinarySearchTree* f = p->right; // Frère de x
+
+    // Rotation gauche en p
+    leftrotate(p);
+    f->color = black;
+    p->color = red;
+
+    // Le nouveau frère de x devient noir
+    return fixredblack_remove_case1(p, p->left);
+}
+
+
 
 
 /*------------------------  BSTreeVisitors  -----------------------------*/
