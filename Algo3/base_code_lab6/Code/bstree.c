@@ -95,7 +95,7 @@ BinarySearchTree* bstree_cons(BinarySearchTree* left, BinarySearchTree* right, i
     return t;
 }
 
-/*-----------------------------------------Exercice 4-------------------------------------------*/
+/*-----------------------------------------Exercice 5-4-------------------------------------------*/
 
 typedef const BinarySearchTree* (*AccessFunction)(const BinarySearchTree* node);
 
@@ -364,7 +364,7 @@ void bstree_remove(ptrBinarySearchTree* t, int v) {
   }
 }
 
-/*------------------------------EXERCICE 2------------------------------*/
+/*------------------------------EXERCICE 6-2------------------------------*/
 
 void leftrotate(BinarySearchTree* x) {
     if (!x || !x->right) return;
@@ -408,7 +408,7 @@ void rightrotate(BinarySearchTree* y) {
     y->parent = x;
 }
 
-/*-----------------------------------------EXERCICE 3------------------------------------------*/
+/*-----------------------------------------EXERCICE 6-3------------------------------------------*/
 
 BinarySearchTree* grandparent(BinarySearchTree* n) {
     assert(!bstree_empty(n)&&!bstree_empty(n->parent)&&!bstree_empty(n->parent->parent));
@@ -428,9 +428,8 @@ BinarySearchTree* uncle(BinarySearchTree* n) {
 
 // Fonction principale de correction après insertion
 BinarySearchTree* fixredblack_insert(ptrBinarySearchTree x) {
-    if (!x) return NULL;
+    assert(!bstree_empty(x));
 
-    // Cas racine
     if (!x->parent) {
         x->color = black;
         return x;
@@ -480,11 +479,9 @@ BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x) {
         x = x->right;
     }
 
-    // Mise à jour des pointeurs après rotation éventuelle
     p = x->parent;
     pp = grandparent(x);
 
-    // Rotation finale
     if (x == p->left) {
         rightrotate(pp);
     } else {
@@ -497,21 +494,19 @@ BinarySearchTree* fixredblack_insert_case2(ptrBinarySearchTree x) {
     return p;
 }
 
-/*-------------------------------EXERCICE 5----------------------------------*/
+/*-------------------------------EXERCICE 6-5----------------------------------*/
 
 BinarySearchTree* fixredblack_remove(BinarySearchTree* p, BinarySearchTree* x) {
-    // Cas 0 : Le nœud x est la racine
     if (p == NULL) {
         if (x != NULL) x->color = black;
         return x;
     }
 
-    // Identification des cas à traiter
-    BinarySearchTree* f = (x == p->left) ? p->right : p->left; // Frère de x
+    BinarySearchTree* f = (x == p->left) ? p->right : p->left;
     if (f->color == black) {
-        return fixredblack_remove_case1(p, x); // Cas 1
+        return fixredblack_remove_case1(p, x);
     } else {
-        return fixredblack_remove_case2(p, x); // Cas 2
+        return fixredblack_remove_case2(p, x);
     }
 }
 
@@ -524,46 +519,48 @@ BinarySearchTree* fixredblack_remove_case1(BinarySearchTree* p,BinarySearchTree*
 }
 
 BinarySearchTree* fixredblack_remove_case1_right(BinarySearchTree* p) {
-    BinarySearchTree* f = p->left; // Frère de x
+    assert(!bstree_empty(p));
+    BinarySearchTree* f = p->left;
     BinarySearchTree* g = f->right;
     BinarySearchTree* d = f->left;
 
     if ((g == NULL || g->color == black) && (d == NULL || d->color == black)) {
+        // Sous-cas : Les deux fils de f sont noirs
         f->color = red;
-        if (p->color == red) {
+        if (p->color == red)
             p->color = black;
-        } else {
+        else
             return fixredblack_remove(p->parent, p);
-        }
     } else if (d != NULL && d->color == red) {
+        // Sous-cas : Le fils droit de f est rouge
         rightrotate(p);
         f->color = p->color;
         p->color = black;
         if (d != NULL) d->color = black;
     } else if (g != NULL && g->color == red) {
+        // Sous-cas : Le fils gauche de f est rouge
         leftrotate(f);
         g->color = black;
         f->color = red;
         return fixredblack_remove_case1_right(p);
     }
-
     return p;
 }
 
 
 BinarySearchTree* fixredblack_remove_case1_left(BinarySearchTree* p) {
-    BinarySearchTree* f = p->right; // Frère de x
+    assert(!bstree_empty(p));
+    BinarySearchTree* f = p->right;
     BinarySearchTree* g = f->left;
     BinarySearchTree* d = f->right;
 
     if ((g == NULL || g->color == black) && (d == NULL || d->color == black)) {
         // Sous-cas : Les deux fils de f sont noirs
         f->color = red;
-        if (p->color == red) {
+        if (p->color == red)
             p->color = black;
-        } else {
+        else
             return fixredblack_remove(p->parent, p);
-        }
     } else if (d != NULL && d->color == red) {
         // Sous-cas : Le fils droit de f est rouge
         leftrotate(p);
@@ -575,25 +572,23 @@ BinarySearchTree* fixredblack_remove_case1_left(BinarySearchTree* p) {
         rightrotate(f);
         g->color = black;
         f->color = red;
-        return fixredblack_remove_case1_left(p); // Rappel sur le nouveau sous-arbre
+        return fixredblack_remove_case1_left(p);
     }
 
     return p;
 }
 
-
 BinarySearchTree* fixredblack_remove_case2(BinarySearchTree* p, BinarySearchTree* x) {
-    if (x == p->left) {
+    assert(!bstree_empty(p)&&!bstree_empty(x));
+    if (x == p->left)
         return fixredblack_remove_case2_left(p);
-    } else {
-        return fixredblack_remove_case2_right(p);
-    }
+    return fixredblack_remove_case2_right(p);
 }
 
 BinarySearchTree* fixredblack_remove_case2_right(BinarySearchTree* p) {
-    BinarySearchTree* f = p->left; // Frère de x
+    assert(!bstree_empty(p));
+    BinarySearchTree* f = p->left;
 
-    // Rotation droite en p
     rightrotate(p);
     f->color = black;
     p->color = red;
@@ -603,9 +598,9 @@ BinarySearchTree* fixredblack_remove_case2_right(BinarySearchTree* p) {
 }
 
 BinarySearchTree* fixredblack_remove_case2_left(BinarySearchTree* p) {
-    BinarySearchTree* f = p->right; // Frère de x
+    assert(!bstree_empty(p));
+    BinarySearchTree* f = p->right;
 
-    // Rotation gauche en p
     leftrotate(p);
     f->color = black;
     p->color = red;
@@ -613,9 +608,6 @@ BinarySearchTree* fixredblack_remove_case2_left(BinarySearchTree* p) {
     // Le nouveau frère de x devient noir
     return fixredblack_remove_case1(p, p->left);
 }
-
-
-
 
 /*------------------------  BSTreeVisitors  -----------------------------*/
 
@@ -625,7 +617,6 @@ void bstree_depth_prefix(const BinarySearchTree* t, OperateFunctor f, void* envi
     bstree_depth_prefix(t->left, f, environment);
     bstree_depth_prefix(t->right, f, environment);
 }
-
 
 void bstree_depth_infix(const BinarySearchTree* t, OperateFunctor f, void* environment) {
     if (bstree_empty(t)) return;
@@ -663,23 +654,23 @@ void bstree_iterative_depth_infix(const BinarySearchTree* t, OperateFunctor f, v
 
     while (current) {
         if (!prev || prev == current->parent) {
-            // Descend left if possible
+            // Descendre a fauche si possible
             if (current->left) {
                 prev = current;
                 current = current->left;
             } else {
-                // Visit current node
+                // Visiter le noeud courant
                 f(current, userData);
                 prev = current;
                 current = current->right ? current->right : current->parent;
             }
         } else if (prev == current->left) {
-            // Coming back from the left child
+            // revenir du fils gauche
             f(current, userData);
             prev = current;
             current = current->right ? current->right : current->parent;
         } else {
-            // Coming back from the right child
+            // revenir du fils droit
             prev = current;
             current = current->parent;
         }
@@ -708,7 +699,6 @@ const BinarySearchTree* goto_min(const BinarySearchTree* e) {
     return e;
 }
 
-
 /* maximum element of the collection */
 const BinarySearchTree* goto_max(const BinarySearchTree* e) {
     if (!e) return NULL; // Cas de base : arbre vide
@@ -717,7 +707,6 @@ const BinarySearchTree* goto_max(const BinarySearchTree* e) {
     }
     return e;
 }
-
 
 /* constructor */
 BSTreeIterator* bstree_iterator_create(const BinarySearchTree* collection, IteratorDirection direction) {
@@ -746,27 +735,21 @@ void bstree_iterator_delete(ptrBSTreeIterator* iterator) {
     }
 }
 
-
 BSTreeIterator* bstree_iterator_begin(BSTreeIterator* iterator) {
     if (!iterator) return NULL;
     iterator->cur = iterator->begin(iterator->collection);
     return iterator;
 }
 
-
-
 bool bstree_iterator_end(const BSTreeIterator* iterator) {
     return !iterator || !iterator->cur;
 }
-
-
 
 BSTreeIterator* bstree_iterator_next(BSTreeIterator* iterator) {
     if (!iterator || !iterator->cur) return NULL;
     iterator->cur = iterator->next(iterator->cur);
     return iterator;
 }
-
 
 const BinarySearchTree* bstree_iterator_value(const BSTreeIterator* iterator) {
     return iterator ? iterator->cur : NULL;
