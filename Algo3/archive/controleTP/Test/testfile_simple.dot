@@ -1,0 +1,6 @@
+digraph Trie {
+	graph [];
+	node [shape = record];
+
+
+}

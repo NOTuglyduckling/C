@@ -13,48 +13,48 @@
 #define LOCALHOST "127.0.0.1"
 #define NO_BASE_PORT 17900
 
-/* Receiver Process */
+/* Processus Récepteur */
 void receiver(int myNumber, routing_table_t *routingTable) {
     int sock;
     struct sockaddr_in myAddr, senderAddr;
     char buffer[BUF_SIZE];
     socklen_t addrLen = sizeof(senderAddr);
 
-    // Create UDP socket
+    // Creation socket UDP
     if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("Receiver socket creation failed");
+        perror("Erreur création socket Récepteur");
         exit(EXIT_FAILURE);
     }
 
-    // Bind socket to this router's port
+    // Bind socket au port de se routeur
     memset(&myAddr, 0, sizeof(myAddr));
     myAddr.sin_family = AF_INET;
     myAddr.sin_port = htons(NO_BASE_PORT + myNumber);
     myAddr.sin_addr.s_addr = inet_addr(LOCALHOST);
 
     if (bind(sock, (struct sockaddr *)&myAddr, sizeof(myAddr)) < 0) {
-        perror("Receiver bind failed");
+        perror("Erreur bind Récepteur");
         close(sock);
         exit(EXIT_FAILURE);
     }
 
-    printf("Receiver: Listening for routing updates...\n");
+    printf("Recepteur: Ecoute pour recevoir table de routage...\n");
 
-    // Receive number of entries
+    // Recevoir nombre d'entrées table de routage
     int received = recvfrom(sock, buffer, BUF_SIZE - 1, 0, (struct sockaddr *)&senderAddr, &addrLen);
     if (received < 0) {
-        perror("Failed to receive number of entries");
+        perror("Erreur réception nombre d'entrées");
         close(sock);
         exit(EXIT_FAILURE);
     }
     buffer[received] = '\0';
     int numEntries = atoi(buffer);
 
-    // Receive routing table entries
+    // Recevoir entrées table de routage
     for (int i = 0; i < numEntries; i++) {
         received = recvfrom(sock, buffer, BUF_SIZE - 1, 0, (struct sockaddr *)&senderAddr, &addrLen);
         if (received < 0) {
-            perror("Failed to receive routing table entry");
+            perror("Erreur Réception entrée table de routage");
             continue;
         }
         buffer[received] = '\0';
@@ -64,91 +64,89 @@ void receiver(int myNumber, routing_table_t *routingTable) {
         }
     }
 
-    printf("Receiver: Updated routing table:\n");
-    display_routing_table(routingTable, "Receiver");
+    printf("Récepteur : Table de routage mise à jour :\n");
+    display_routing_table(routingTable, "Récepteur");
 
     close(sock);
 }
 
-/* Emitter Process */
+/* Processus Emetteur */
 void emitter(int neighborNumber, routing_table_t *routingTable) {
     int sock;
     struct sockaddr_in neighborAddr;
     char buffer[BUF_SIZE];
 
-    // Create UDP socket
+    // Creation socket UDP
     if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-        perror("Emitter socket creation failed");
+        perror("Erreur création socket Emetteur");
         exit(EXIT_FAILURE);
     }
 
-    // Define neighbor router address
+    // Definir l'adresse du routeur voisin
     memset(&neighborAddr, 0, sizeof(neighborAddr));
     neighborAddr.sin_family = AF_INET;
     neighborAddr.sin_port = htons(NO_BASE_PORT + neighborNumber);
     neighborAddr.sin_addr.s_addr = inet_addr(LOCALHOST);
 
-    printf("Emitter: Sending routing updates to neighbor...\n");
+    printf("Emetteur: Envoi de mises à jour au voisin...\n");
 
-    // Send number of entries
+    // Envoi nombre d'entrées
     snprintf(buffer, sizeof(buffer), "%d", routingTable->nb_entry);
     if (sendto(sock, buffer, strlen(buffer), 0, (struct sockaddr *)&neighborAddr, sizeof(neighborAddr)) < 0) {
-        perror("Failed to send number of entries");
+        perror("Erreur envoi nombre d'entrées");
         close(sock);
         exit(EXIT_FAILURE);
     }
 
-    // Send routing table entries
+    // Envoi entrées table de routage
     for (int i = 0; i < routingTable->nb_entry; i++) {
         if (sendto(sock, routingTable->tab_entry[i], strlen(routingTable->tab_entry[i]), 0,
                    (struct sockaddr *)&neighborAddr, sizeof(neighborAddr)) < 0) {
-            perror("Failed to send routing table entry");
+            perror("Erreur envoi entrée table de routage");
         }
     }
 
-    printf("Emitter: Routing table updates sent.\n");
+    printf("Emetteur: Mises à jour table de routage envoyées.\n");
     close(sock);
 }
 
-/* Main Function */
+/* Fonction Principale */
 int main(int argc, char **argv) {
     if (argc != 4) {
         printf("Usage: %s MyIPAdresseID MyNumber NeighborNumber\n", argv[0]);
-        exit(EXIT_FAILURE);
+        exit(1);
     }
 
     char idInitConfigFile[20];
     char myId[32];
     routing_table_t myRoutingTable;
 
-    // Build Router ID and Config File ID
+    // Construction Router ID et Config File ID
     sprintf(myId, "R%s %s", argv[2], argv[1]);
     sprintf(idInitConfigFile, "R%sCfg.txt", argv[2]);
 
-    // Load Routing Table
+    // Charge table de routage
     init_routing_table(&myRoutingTable, idInitConfigFile);
-    printf("Router %s: Initial Routing Table:\n", myId);
+    printf("Router %s: Table de routage Initiale :\n", myId);
     display_routing_table(&myRoutingTable, myId);
+    printf("\n");
 
-    // Fork for receiver process
+    // Création fils pour recepteur
     pid_t pid = fork();
     if (pid < 0) {
-        perror("Fork failed");
-        exit(EXIT_FAILURE);
+        perror("Erreur Fork");
+        exit(2);
     }
 
     if (pid == 0) {
-        // Child process (Receiver)
+        // Processus fils Récepteur
         receiver(atoi(argv[2]), &myRoutingTable);
-        exit(EXIT_SUCCESS);
+        exit(0);
     } else {
-        // Parent process (Emitter)
+        // Processus père Emetteur
         emitter(atoi(argv[3]), &myRoutingTable);
-        // Wait for child process (Receiver) to finish
+        // Attendre fin fils
         wait(NULL);
     }
-
-    display_routing_table(&myRoutingTable, myId);
-
     return 0;
 }

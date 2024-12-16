@@ -29,10 +29,7 @@
 /* FONCTION PRINCIPALE : PEER PROCESSUS DE ROUTAGE ROLE RECEPTEUR ONLY */
 /* =================================================================== */
 int main(int argc, char **argv) {
-  if (argc != 4) {
-    printf("Usage: %s IDIP@ssRouter MyNumberRouter NeighborNumberRouter\n", argv[0]);
-    exit(1);
-  }
+
   // Usage routPrec IDIP@ssRouter  MyNumberRouter NeigborNumberRouter
   // Example routPrec 10.1.1.1 1 2
 
@@ -40,6 +37,8 @@ int main(int argc, char **argv) {
   char myId [32]; // String array representing the whole id of the Router
 
   routing_table_t myRoutingTable; //Routing TABLE
+
+
 
   /* Building ID Router from command args */
   sprintf(myId,"R%s %s",argv[2],argv[1]);
@@ -54,63 +53,52 @@ int main(int argc, char **argv) {
   printf("ROUTEUR : %d entrées initialement chargées \n",myRoutingTable.nb_entry);
   display_routing_table(&myRoutingTable,myId);
 
-  // Creation socket UDP
-  int sock = socket(AF_INET, SOCK_DGRAM, 0);
-  if (sock < 0) {
-    perror("Erreur création socket");
-    exit(2);
+  /* A COMPLETER PAR LES ETUDIANTS ...
+  ************************************/
+  // Variables :
+  int port = NO_BASE_PORT + atoi(argv[2]);
+  char msg_recu[BUF_SIZE_IN];
+  struct sockaddr_in serverSockAddr;
+  int to_server_socket = -1;
+
+  /* Création de la structure du socket */
+  memset(&serverSockAddr, 0, sizeof(serverSockAddr));
+  serverSockAddr.sin_port = htons(port);
+  serverSockAddr.sin_family = AF_INET;
+  serverSockAddr.sin_addr.s_addr = htonl(INADDR_ANY);
+
+  /* Création de la socket */
+  if ((to_server_socket = socket(AF_INET,SOCK_DGRAM,0)) < 0) {
+      printf("Probleme de la creation socket client\n");
+      exit(0);
   }
 
-  // Bind socket pour recevoir
-  struct sockaddr_in myAddr;
-  memset(&myAddr, 0, sizeof(myAddr));
-  myAddr.sin_family = AF_INET;
-  myAddr.sin_port = htons(NO_BASE_PORT + atoi(argv[2]));
-  myAddr.sin_addr.s_addr = inet_addr(LOCALHOST);
-
-  if (bind(sock, (struct sockaddr *)&myAddr, sizeof(myAddr)) < 0) {
-      perror("Erreur Bind");
-      close(sock);
-      exit(3);
+  /* Bind (seulement chez le réceupteur) */
+  if (bind(to_server_socket, (struct sockaddr *) &serverSockAddr, sizeof(serverSockAddr)) == -1) {
+      printf("Probleme de bind\n");
+      close(to_server_socket);
+      exit(0);
   }
 
-  // Recevoir nombre d'entrées
-  char buffer[BUF_SIZE_IN];
-  int received = recvfrom(sock, buffer, sizeof(buffer) - 1, 0, NULL, NULL);
-  if (received < 0) {
-      perror("Erreur réception nombre d'entrées");
-      close(sock);
-      exit(4);
+  char nb_entry[4];
+  if (recvfrom(to_server_socket, nb_entry, 64, 0, NULL, NULL) == -1) {
+      printf("Problème lors de la réception du nb_entry\n");
+      close(to_server_socket);
+      exit(0);
   }
-  buffer[received] = '\0';
-  int numEntries = atoi(buffer);
-
-  // Recevoir entrées table de routage
-  for (int i = 0; i < numEntries; i++) {
-      received = recvfrom(sock, buffer, sizeof(buffer) - 1, 0, NULL, NULL);
-      if (received < 0) {
-          perror("Erreur réception entrée table de routage");
-          continue;
+  for (int i = 0; i < atoi(nb_entry); i++) {
+      if (recvfrom(to_server_socket, &msg_recu, sizeof(msg_recu), 0, NULL, NULL) == -1) {
+          printf("Problème lors de la réception d'une tab_entry\n");
+          close(to_server_socket);
+          exit(0);
       }
-      buffer[received] = '\0';
-
-      // Ajouter l'entrée a notre table si elle n'est pas déjà présente
-      if (!is_present_entry_table(&myRoutingTable, buffer)) {
-          add_entry_routing_table(&myRoutingTable, buffer);
-      }
+      add_entry_routing_table(&myRoutingTable, msg_recu);
   }
 
-  // Afficher nouvelle table de routage
+  // Display new content of my routing table
   display_routing_table(&myRoutingTable,myId);
-  close(sock);
-  exit(0);
-}
 
-
-    
-
-    
-
-
-
-
+  /* Fermeture de la socket */
+  close(to_server_socket);
+  exit(EXIT_SUCCESS);
+ }
