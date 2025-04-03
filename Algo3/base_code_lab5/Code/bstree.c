@@ -278,6 +278,7 @@ void bstree_remove_node(ptrBinarySearchTree* t, ptrBinarySearchTree current) {
     }
 }
 
+
 void bstree_remove(ptrBinarySearchTree* t, int v) {
   ptrBinarySearchTree current = *t;
   while (current){

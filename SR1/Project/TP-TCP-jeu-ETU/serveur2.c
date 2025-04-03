@@ -53,7 +53,7 @@ int main() {
         close(server_fd);
         exit(EXIT_FAILURE);
     }
-    int nbclient=0;
+    int nbclient=0; // Utilisé pour numéroter les clients pour plus de clarté
 
     printf("Server listening on port %d...\n", PORT);
 
@@ -80,7 +80,7 @@ int main() {
                 int received = recv(client_fd, buffer, BUFFER_SIZE, 0);
                 if (received <= 0) {
                     perror("Client disconnected or error");
-                    break;
+                    exit(2);
                 }
                 buffer[received] = '\0';
 
@@ -104,6 +104,7 @@ int main() {
             close(client_fd);
             printf("Connection closed with client %d.\n",nbclient);
             nbclient--;
+            // tuer le fils qui traite se client
             exit(0);
         }
     }

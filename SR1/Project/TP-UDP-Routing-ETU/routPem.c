@@ -18,7 +18,7 @@
 #include <stdbool.h>
 #include "tabrout.h"
 
-#define BUF_SIZE_OUT 64 // we should send less...
+#define BUF_SIZE_OUT 4 // taille max de tableau envoyé
 #define IPV4_ADR_STRLEN 16  // == INET_ADDRSTRLEN
 #define LOCALHOST "127.0.0.1"
 #define NO_BASE_PORT 17900  // base number for computing real port number
@@ -57,37 +57,36 @@ int main(int argc, char **argv) {
   printf("ROUTEUR : %d entrées initialement chargées \n",myRoutingTable.nb_entry);
   display_routing_table(&myRoutingTable,myId);
 
-  // Create UDP socket
+  // Creation socket UDP
   if ((sock = socket(AF_INET, SOCK_DGRAM, 0)) < 0) {
-      perror("Emitter socket creation failed");
-      exit(EXIT_FAILURE);
+      perror("Erreur creation socket Emetteur");
+      exit(2);
   }
 
-  // Define neighbor router address
+  // Definir l'adresse du routeur voisin
   memset(&neighborAddr, 0, sizeof(neighborAddr));
   neighborAddr.sin_family = AF_INET;
-  neighborAddr.sin_port = htons(NO_BASE_PORT + argv[2]);
+  neighborAddr.sin_port = htons(NO_BASE_PORT + atoi(argv[3]));
   neighborAddr.sin_addr.s_addr = inet_addr(LOCALHOST);
 
-  printf("Emitter: Sending routing updates to neighbor...\n");
+  printf("Emitter: Envoi mises à jour table de routage...\n");
 
-  // Send number of entries
+  // Envoyer nombre d'entrées
   snprintf(buffer, sizeof(buffer), "%d", myRoutingTable.nb_entry);
   if (sendto(sock, buffer, strlen(buffer), 0, (struct sockaddr *)&neighborAddr, sizeof(neighborAddr)) < 0) {
-      perror("Failed to send number of entries");
+      perror("Erreur d'envoi nombre d'entrées");
       close(sock);
-      exit(EXIT_FAILURE);
+      exit(3);
   }
 
-  // Send routing table entries
+  // Envoyer les entrées de la table
   for (int i = 0; i < myRoutingTable.nb_entry; i++) {
+    printf("Entrée %d : %s\n",i, myRoutingTable.tab_entry[i]);
     if (sendto(sock, myRoutingTable.tab_entry[i], strlen(myRoutingTable.tab_entry[i]), 0,(struct sockaddr *)&neighborAddr, sizeof(neighborAddr)) < 0) {
-      perror("Failed to send routing table entry");
+      perror("Erreur d'envoi entrée table.");
     }
   }
-
-  printf("Emitter: Routing table updates sent.\n");
+  printf("Emitter: Table envoyée avec succès\n");
   close(sock);
-
-  exit(1);
+  exit(0);
 }

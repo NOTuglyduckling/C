@@ -54,53 +54,53 @@ int main(int argc, char **argv) {
   printf("ROUTEUR : %d entrées initialement chargées \n",myRoutingTable.nb_entry);
   display_routing_table(&myRoutingTable,myId);
 
-  // Create UDP socket
+  // Creation socket UDP
   int sock = socket(AF_INET, SOCK_DGRAM, 0);
   if (sock < 0) {
-    perror("Socket creation failed");
+    perror("Erreur création socket");
     exit(2);
   }
 
-  // Bind socket to receive data
+  // Bind socket pour recevoir
   struct sockaddr_in myAddr;
   memset(&myAddr, 0, sizeof(myAddr));
   myAddr.sin_family = AF_INET;
-  myAddr.sin_port = htons(NO_BASE_PORT + atoi(argv[2]));  // Receiver's port
+  myAddr.sin_port = htons(NO_BASE_PORT + atoi(argv[2]));
   myAddr.sin_addr.s_addr = inet_addr(LOCALHOST);
 
   if (bind(sock, (struct sockaddr *)&myAddr, sizeof(myAddr)) < 0) {
-      perror("Bind failed");
+      perror("Erreur Bind");
       close(sock);
       exit(3);
   }
 
-  // Receive number of entries
+  // Recevoir nombre d'entrées
   char buffer[BUF_SIZE_IN];
   int received = recvfrom(sock, buffer, sizeof(buffer) - 1, 0, NULL, NULL);
   if (received < 0) {
-      perror("Failed to receive number of entries");
+      perror("Erreur réception nombre d'entrées");
       close(sock);
       exit(4);
   }
   buffer[received] = '\0';
   int numEntries = atoi(buffer);
 
-  // Receive routing table entries
+  // Recevoir entrées table de routage
   for (int i = 0; i < numEntries; i++) {
       received = recvfrom(sock, buffer, sizeof(buffer) - 1, 0, NULL, NULL);
       if (received < 0) {
-          perror("Failed to receive routing table entry");
+          perror("Erreur réception entrée table de routage");
           continue;
       }
       buffer[received] = '\0';
 
-      // Add entry to routing table if not present
+      // Ajouter l'entrée a notre table si elle n'est pas déjà présente
       if (!is_present_entry_table(&myRoutingTable, buffer)) {
           add_entry_routing_table(&myRoutingTable, buffer);
       }
   }
 
-  // Display new content of my routing table
+  // Afficher nouvelle table de routage
   display_routing_table(&myRoutingTable,myId);
   close(sock);
   exit(0);
